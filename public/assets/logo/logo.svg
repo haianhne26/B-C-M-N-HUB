@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" fill="none">
+  <rect width="40" height="40" x="10" y="10" rx="10" fill="#7C3AED" />
+  <path d="M32 20L22 34h7l-2 10 11-14h-7l3-10z" fill="#FFFFFF"/>
+  <text x="62" y="36" fill="#18181B" font-family="Inter, sans-serif" font-size="20" font-weight="800" letter-spacing="-0.5">BẠC MÔN</text>
+  <text x="165" y="36" fill="#7C3AED" font-family="Inter, sans-serif" font-size="20" font-weight="800" letter-spacing="-0.5">HUB</text>
+</svg>
