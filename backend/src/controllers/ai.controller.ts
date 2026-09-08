@@ -110,7 +110,7 @@ Nếu thiếu: NÓI RA RỦI RO`;
     if (apiKey) {
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
         // Clean base64
         const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
@@ -122,9 +122,14 @@ ${systemPrompt}
 QUY TẮC PHÂN TÍCH BẮT BUỘC:
 ${analysisRules}
 
-Hãy phân tích hình ảnh biểu đồ đính kèm theo đúng 5 Phase của GAMBLER HUB AI SYSTEM ở trên.
-TUYỆT ĐỐI KHÔNG ĐƯỢC SUY ĐOÁN. Nếu thiếu bất kỳ điều kiện nào, phải nói rõ và ghi CẢNH BÁO RỦI RO.
-Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown code block:
+Hãy quan sát thật kỹ hình ảnh biểu đồ giá thực tế đính kèm và phân tích theo đúng 5 Phase của GAMBLER HUB AI SYSTEM ở trên:
+- Nhìn rõ cặp tiền tệ/tài sản, khung thời gian trên ảnh chart.
+- Kiểm tra phiên giao dịch, quét thanh khoản Asian/London, PDH/PDL.
+- Kiểm tra cấu trúc M30 BOS, M15 Sweep + MSS, hoặc M5 Turtle Soup.
+- Kiểm tra vùng Premium / Discount để xác định Entry.
+- TUYỆT ĐỐI KHÔNG SUY ĐOÁN. Nếu biểu đồ thiếu điều kiện hoặc không rõ ràng, PHẢI CẢNH BÁO RỦI RO và set marketBias là NEUTRAL hoặc nói rõ rủi ro!
+
+Trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm text râu ria ngoài JSON):
 {
   "marketBias": "BUY" | "SELL" | "NEUTRAL",
   "confidence": 85,
@@ -132,12 +137,12 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown code blo
   "stopLoss": "Mức giá cắt lỗ",
   "takeProfit": "Mức giá chốt lời",
   "riskReward": "1 : 2.5",
-  "reasoning": "Chi tiết phân tích theo 5 Phase: Daily Bias, Market Bias H1/H4, Session Liquidity, M30 BOS & M15 Sweep/MSS",
+  "reasoning": "Chi tiết phân tích 5 Phase trên biểu đồ này",
   "keyLevels": ["Asian High/Low", "London High/Low", "PDH/PDL", "Order Block", "FVG"],
   "marketStructure": "BOS M30 / MSS M15 / Turtle Soup M5",
-  "signals": ["Tín hiệu xác nhận"],
+  "signals": ["Tín hiệu cụ thể"],
   "invalidation": "CẢNH BÁO RỦI RO nếu thiếu điều kiện, hoặc điều kiện hủy setup",
-  "educationalExplanation": "Bài học tuân thủ kỷ luật Bạc Môn Gambler Hub System"
+  "educationalExplanation": "Kỷ luật Bạc Môn Gambler Hub"
 }
 `;
 
@@ -150,21 +155,22 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown code blo
 
         const result = await model.generateContent([prompt, imagePart]);
         const responseText = result.response.text().trim();
+        console.log('Gemini 3.6-flash analysis raw output:', responseText);
 
-        // Parse JSON from Gemini output
+        // Parse JSON from Gemini output (clean markdown blocks)
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           aiResponse = JSON.parse(jsonMatch[0]);
         } else {
-          throw new Error('Could not parse JSON from Gemini output');
+          throw new Error('Không thể bóc tách JSON từ kết quả Gemini');
         }
       } catch (geminiError: any) {
-        console.warn('Lỗi gọi Gemini API (fallback sang structured template):', geminiError.message);
-        aiResponse = getFallbackAnalysis();
+        console.error('Lỗi gọi Gemini 3.6 Flash:', geminiError);
+        aiResponse = getFallbackAnalysis(geminiError.message);
       }
     } else {
       // Fallback khi chưa cấu hình Gemini API Key
-      aiResponse = getFallbackAnalysis();
+      aiResponse = getFallbackAnalysis('Chưa cấu hình GEMINI_API_KEY');
     }
 
     // Save User message
@@ -233,7 +239,7 @@ export async function chatFollowUp(req: AuthenticatedRequest, res: Response) {
     if (apiKey) {
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
         // Fetch recent messages for context
         const recentMessages = await prisma.aIMessage.findMany({
@@ -244,30 +250,26 @@ export async function chatFollowUp(req: AuthenticatedRequest, res: Response) {
 
         const historyPrompt = recentMessages.map(m => `${m.role}: ${m.content}`).join('\n');
         const finalPrompt = `BẠN LÀ BẠC MÔN Hub AI — HỆ THỐNG GAMBLER HUB AI SYSTEM.
-Nhiệm vụ: Phân tích thị trường theo đúng hệ thống BẠC MÔN Hub.
-- Không được suy đoán.
-- Chỉ đưa ra tín hiệu khi toàn bộ điều kiện bắt buộc được đáp ứng.
-- Nếu còn thiếu bất kỳ điều kiện nào phải CẢNH BÁO RỦI RO.
-- Tuân thủ 5 Phase:
-  + Phase 1: Daily Bias Filter (Weekly Profile chỉ là bộ lọc xác suất: Classic Expansion, Midweek Reversal, TGIF).
-  + Phase 2: Market Bias (H4, H1: OB, Breaker Block, FVG, IFVG. Bias chính theo H1).
-  + Phase 3: Session Liquidity (Chỉ trade phiên NY. Cần Liquidity Sweep Asian/London/PDH/PDL, thiếu là CẢNH BÁO RỦI RO).
-  + Phase 4: Market Structure (M30 phải có BOS, không có thì NO TRADE; M15 phải có Liquidity Sweep + MSS, hoặc M5 Turtle Soup).
-  + Phase 5: Entry (M5/M1 OB, FVG. BUY: Discount Only; SELL: Premium Only. Turtle Soup ưu tiên Entry tại OB).
+Nhiệm vụ: Bạn là AI hỗ trợ phân tích của hệ thống Bạc Môn Hub. Trả lời câu hỏi của trader dựa trên nguyên tắc GAMBLER HUB SYSTEM:
+- Tuyệt đối không suy đoán.
+- Phải trung thực, chính xác theo kỷ luật 5 Phase (Weekly Profile, Bias H1/H4, Session NY Liquidity Sweep, M30 BOS & M15 MSS, Entry Discount/Premium).
+- Nếu trader hỏi ngoài lề (như 'bạn là ai', 'tại sao', 'giải thích thêm'), hãy trả lời thân thiện, lịch sự nhưng giữ vững phong cách kỷ luật trader Bạc Môn.
 
 Lịch sử hội thoại:
 ${historyPrompt}
 
 Câu hỏi của trader: ${message}
-Hãy trả lời ngắn gọn, chuẩn xác theo đúng các nguyên tắc trên:`;
+Trả lời bằng tiếng Việt:`;
 
         const result = await model.generateContent(finalPrompt);
         replyText = result.response.text();
-      } catch {
-        replyText = `Dựa trên cấu trúc thị trường hiện tại, vùng kháng cự quan trọng vẫn đang được tôn trọng. Bạn nên chờ đợi tín hiệu xác nhận (Confirmation Candle) trước khi vào lệnh để bảo toàn vốn tối đa.`;
+        console.log('Gemini 3.6-flash chat reply:', replyText);
+      } catch (err: any) {
+        console.error('Chat follow-up error:', err);
+        replyText = `Bạc Môn AI gặp lỗi khi kết nối Gemini: ${err.message}. Vui lòng thử lại.`;
       }
     } else {
-      replyText = `Dựa trên cấu trúc thị trường hiện tại, vùng kháng cự quan trọng vẫn đang được tôn trọng. Bạn nên chờ đợi tín hiệu xác nhận (Confirmation Candle) trước khi vào lệnh để bảo toàn vốn tối đa.`;
+      replyText = `Hệ thống chưa cấu hình Gemini API Key. Vui lòng kiểm tra lại cấu hình.`;
     }
 
     // Save AI response
@@ -329,19 +331,19 @@ export async function getConversationMessages(req: AuthenticatedRequest, res: Re
   }
 }
 
-function getFallbackAnalysis(): AIAnalysisResult {
+function getFallbackAnalysis(errorMessage?: string): AIAnalysisResult {
   return {
-    marketBias: 'BUY',
-    confidence: 85,
-    entry: '2,746.20 (Discount Zone - M5 Bullish Order Block)',
-    stopLoss: '2,739.50 (Dưới London Low đã bị quét)',
-    takeProfit: '2,764.00 (Asian High & Buyside Liquidity)',
-    riskReward: '1 : 2.7',
-    reasoning: '[GAMBLER HUB SYSTEM] Phase 1: Daily Bias Bullish (+1). Phase 2: H1 Bias Bullish tại H1 FVG (+1), hợp lưu H4 (+2). Phase 3: Phiên New York đã thực hiện quét sạch London Low (Liquidity Sweep). Phase 4: M30 đã có BOS tăng, M15 xác nhận Liquidity Sweep + MSS đảo chiều. Phase 5: Giá hồi quy về vùng Discount tại M5 Order Block.',
-    keyLevels: ['London Low: 2,741.00 (Đã quét)', 'Asian High: 2,764.00 (Mục tiêu)', 'M5 Bullish OB: 2,745.50 - 2,747.00'],
-    marketStructure: 'BOS M30 + Liquidity Sweep M15 + MSS M15 Đạt Chuẩn',
-    signals: ['Quét thanh khoản phiên London', 'M15 MSS đảo chiều', 'Entry tại Discount OB M5'],
-    invalidation: 'CẢNH BÁO RỦI RO: Nếu nến M15 đóng cửa dưới 2,739.00 thì cấu trúc tăng bị phá vỡ, lập tức cắt lỗ bảo toàn vốn.',
-    educationalExplanation: 'Tuân thủ đúng quy tắc Gambler Hub: Chỉ giao dịch phiên NY, chỉ BUY tại vùng Discount sau khi đã có Liquidity Sweep và BOS M30.'
+    marketBias: 'NEUTRAL',
+    confidence: 50,
+    entry: 'Chờ đợi setup',
+    stopLoss: 'Chưa có',
+    takeProfit: 'Chưa có',
+    riskReward: 'N/A',
+    reasoning: `[CẢNH BÁO HỆ THỐNG]: Không thể kết nối hoặc phân tích qua Gemini AI (${errorMessage || 'Thiếu kết nối'}). Theo luật Gambler Hub, khi không đủ dữ kiện, AI KHÔNG ĐƯỢC SUY ĐOÁN và buộc phải đứng ngoài.`,
+    keyLevels: ['Chờ quét thanh khoản'],
+    marketStructure: 'Chưa xác nhận BOS M30',
+    signals: ['Không có tín hiệu vào lệnh hợp lệ'],
+    invalidation: 'CẢNH BÁO RỦI RO: Không vào lệnh khi chưa có đủ dữ liệu xác nhận từ hệ thống AI.',
+    educationalExplanation: 'Kỷ luật Bạc Môn: Bảo toàn vốn là ưu tiên số 1, tuyệt đối không vào lệnh dò đáy bắt đỉnh khi chưa có tín hiệu.'
   };
 }

@@ -97,8 +97,9 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
     };
 
     next();
-  } catch (err) {
-    return res.status(401).json({ success: false, message: 'Phiên đăng nhập đã hết hạn hoặc không hợp lệ' });
+  } catch (err: any) {
+    console.error('Auth verify error:', err.message);
+    return res.status(401).json({ success: false, message: 'Phiên đăng nhập đã hết hạn hoặc không hợp lệ', error: err.message });
   }
 }
 
