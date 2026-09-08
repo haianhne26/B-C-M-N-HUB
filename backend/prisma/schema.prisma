@@ -1,0 +1,447 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// -------------------------------------------------------------
+// 1. Users & Authentication
+// -------------------------------------------------------------
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  fullName     String
+  phone        String?
+  role         String    @default("USER") // OWNER, IB, USER
+  status       String    @default("ACTIVE") // ACTIVE, SUSPENDED, BANNED
+  ibId         String?   // If referred/managed by an IB
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastLoginAt  DateTime?
+
+  // Relations
+  sessions         Session[]
+  licenses         LicenseKey[]      @relation("UserLicenses")
+  createdLicenses  LicenseKey[]      @relation("CreatedLicenses")
+  devices          Device[]
+  mt5Accounts      MT5Account[]
+  aiConversations  AIConversation[]
+  auditLogs        AuditLog[]
+  userPermissions  UserPermission[]
+  managedLeads     Lead[]            @relation("IBLeads")
+  ibLandingPages   IBLandingPage[]
+  ibTags           Tag[]
+  notifications    Notification[]
+
+  @@index([email])
+  @@index([role])
+  @@index([ibId])
+}
+
+model Session {
+  id                String   @id @default(uuid())
+  userId            String
+  refreshToken      String   @unique
+  deviceFingerprint String?
+  ipAddress         String?
+  expiresAt         DateTime
+  createdAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// -------------------------------------------------------------
+// 2. Role-Based Access Control (RBAC)
+// -------------------------------------------------------------
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // OWNER, IB, USER
+  description String?
+  createdAt   DateTime @default(now())
+
+  rolePermissions RolePermission[]
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  code        String   @unique // e.g. "trading.view", "crm.create"
+  description String?
+
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+
+  @@index([code])
+}
+
+model RolePermission {
+  id           String @id @default(uuid())
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model UserPermission {
+  id           String @id @default(uuid())
+  userId       String
+  permissionId String
+  granted      Boolean @default(true)
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
+}
+
+// -------------------------------------------------------------
+// 3. License Keys & Device Management
+// -------------------------------------------------------------
+model LicenseKey {
+  id              String    @id @default(uuid())
+  keyCode         String    @unique // BMH-XXXX-XXXX-XXXX
+  status          String    @default("UNUSED") // UNUSED, ACTIVE, EXPIRED, SUSPENDED, REVOKED
+  userId          String?
+  ibId            String?
+  createdById     String
+  activatedAt     DateTime?
+  expiresAt       DateTime?
+  maxDevices      Int       @default(1)
+  allowedServices String    @default("[\"trading\",\"ai\",\"courses\",\"calendar\"]") // JSON array of string services
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user      User?    @relation("UserLicenses", fields: [userId], references: [id])
+  createdBy User     @relation("CreatedLicenses", fields: [createdById], references: [id])
+  devices   Device[]
+
+  @@index([keyCode])
+  @@index([status])
+  @@index([userId])
+  @@index([ibId])
+}
+
+model Device {
+  id               String   @id @default(uuid())
+  keyId            String
+  userId           String
+  deviceIdentifier String
+  deviceName       String
+  osVersion        String
+  lastActiveAt     DateTime @default(now())
+  createdAt        DateTime @default(now())
+
+  license LicenseKey @relation(fields: [keyId], references: [id], onDelete: Cascade)
+  user    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([keyId, deviceIdentifier])
+  @@index([userId])
+}
+
+// -------------------------------------------------------------
+// 4. MT5 Trading & Bridge
+// -------------------------------------------------------------
+model MT5Account {
+  id            String   @id @default(uuid())
+  userId        String
+  accountNumber Int      @unique
+  broker        String
+  serverName    String
+  currency      String   @default("USD")
+  balance       Float    @default(0.0)
+  equity        Float    @default(0.0)
+  margin        Float    @default(0.0)
+  freeMargin    Float    @default(0.0)
+  marginLevel   Float    @default(0.0)
+  profit        Float    @default(0.0)
+  isConnected   Boolean  @default(false)
+  lastPingAt    DateTime @default(now())
+
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  positions     MT5Position[]
+  historyTrades MT5HistoryTrade[]
+
+  @@index([userId])
+}
+
+model MT5Position {
+  id           String   @id @default(uuid())
+  accountId    String
+  ticket       Int      @unique
+  symbol       String
+  type         String   // BUY, SELL
+  volume       Float
+  openPrice    Float
+  currentPrice Float
+  sl           Float    @default(0.0)
+  tp           Float    @default(0.0)
+  profit       Float    @default(0.0)
+  openTime     DateTime
+
+  account MT5Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([symbol])
+}
+
+model MT5HistoryTrade {
+  id         String   @id @default(uuid())
+  accountId  String
+  ticket     Int      @unique
+  symbol     String
+  type       String   // BUY, SELL
+  volume     Float
+  openPrice  Float
+  closePrice Float
+  profit     Float
+  closeTime  DateTime
+
+  account MT5Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+}
+
+// -------------------------------------------------------------
+// 5. Courses & Premium Content
+// -------------------------------------------------------------
+model Course {
+  id           String          @id @default(uuid())
+  title        String
+  slug         String          @unique
+  description  String
+  thumbnailUrl String?
+  category     String          @default("General")
+  isPremium    Boolean         @default(false)
+  isPublished  Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  chapters CourseChapter[]
+
+  @@index([slug])
+  @@index([category])
+}
+
+model CourseChapter {
+  id        String   @id @default(uuid())
+  courseId  String
+  title     String
+  sortOrder Int      @default(0)
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([courseId])
+}
+
+model Lesson {
+  id            String   @id @default(uuid())
+  chapterId     String
+  title         String
+  contentType   String   @default("VIDEO") // VIDEO, ARTICLE, RESOURCE
+  videoUrl      String?
+  duration      String?
+  sortOrder     Int      @default(0)
+  isFreePreview Boolean  @default(false)
+
+  chapter CourseChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@index([chapterId])
+}
+
+// -------------------------------------------------------------
+// 6. Economic Calendar
+// -------------------------------------------------------------
+model EconomicEvent {
+  id        String   @id @default(uuid())
+  eventTime DateTime
+  country   String
+  currency  String
+  eventName String
+  impact    String   // LOW, MEDIUM, HIGH
+  actual    String?
+  forecast  String?
+  previous  String?
+
+  @@index([eventTime])
+  @@index([currency])
+  @@index([impact])
+}
+
+// -------------------------------------------------------------
+// 7. IB System: Landing Pages & Lead CRM
+// -------------------------------------------------------------
+model IBLandingPage {
+  id             String   @id @default(uuid())
+  ibId           String
+  slug           String   @unique
+  title          String
+  seoDescription String?
+  themeConfig    String?  // JSON for colors/fonts
+  sectionsJson   String   // JSON array of section objects
+  isPublished    Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  ib    User   @relation(fields: [ibId], references: [id], onDelete: Cascade)
+  leads Lead[]
+
+  @@index([ibId])
+  @@index([slug])
+}
+
+model Lead {
+  id            String    @id @default(uuid())
+  ibId          String
+  landingPageId String?
+  fullName      String
+  phone         String
+  email         String?
+  status        String    @default("NEW") // NEW, CONTACTED, CONSULTING, CONVERTED, REJECTED
+  notes         String?
+  createdAt     DateTime  @default(now())
+  lastContactAt DateTime?
+
+  ib          User           @relation("IBLeads", fields: [ibId], references: [id], onDelete: Cascade)
+  landingPage IBLandingPage? @relation(fields: [landingPageId], references: [id])
+  leadTags    LeadTag[]
+
+  @@index([ibId])
+  @@index([status])
+}
+
+model Tag {
+  id    String @id @default(uuid())
+  ibId  String
+  name  String
+  color String @default("#7C3AED")
+
+  ib       User      @relation(fields: [ibId], references: [id], onDelete: Cascade)
+  leadTags LeadTag[]
+
+  @@unique([ibId, name])
+}
+
+model LeadTag {
+  id     String @id @default(uuid())
+  leadId String
+  tagId  String
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId, tagId])
+}
+
+// -------------------------------------------------------------
+// 8. Bạc Môn AI (Gemini Assistant)
+// -------------------------------------------------------------
+model AIConversation {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String   @default("Phân tích mới")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages AIMessage[]
+
+  @@index([userId])
+}
+
+model AIMessage {
+  id             String   @id @default(uuid())
+  conversationId String
+  role           String   // USER, ASSISTANT, SYSTEM
+  content        String
+  imageUrl       String?
+  metadataJson   String?  // Parsed AIAnalysisResult JSON
+  createdAt      DateTime @default(now())
+
+  conversation AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+model AIPromptSetting {
+  id            String   @id @default(uuid())
+  versionTag    String   @unique // e.g. "v1.0", "v1.1"
+  systemPrompt  String
+  analysisRules String
+  outputSchema  String
+  isActive      Boolean  @default(false)
+  temperature   Float    @default(0.2)
+  tokenLimit    Int      @default(2048)
+  createdById   String
+  createdAt     DateTime @default(now())
+}
+
+// -------------------------------------------------------------
+// 9. App Versions & Auto Update
+// -------------------------------------------------------------
+model AppVersion {
+  id                  String   @id @default(uuid())
+  version             String   @unique // e.g. "1.0.1"
+  downloadUrl         String
+  releaseNotes        String
+  releaseDate         DateTime @default(now())
+  isMandatory         Boolean  @default(false)
+  minSupportedVersion String?
+  isPublished         Boolean  @default(true)
+  createdAt           DateTime @default(now())
+
+  @@index([version])
+}
+
+// -------------------------------------------------------------
+// 10. System Administration, Notifications & Audit Logs
+// -------------------------------------------------------------
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String?  // Null means broadcast to all users
+  title     String
+  content   String
+  type      String   @default("SYSTEM") // SYSTEM, KEY, UPDATE, MT5
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  action       String   // e.g. "USER_LOGIN", "KEY_ACTIVATED", "ROLE_CHANGED"
+  targetType   String?
+  targetId     String?
+  ipAddress    String?
+  metadataJson String?
+  createdAt    DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model SystemSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  valueJson   String
+  description String?
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+}
