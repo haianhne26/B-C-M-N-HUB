@@ -11,4 +11,5 @@ export const config = {
   geminiApiKey: process.env.GEMINI_API_KEY || '',
   mt5BridgeToken: process.env.MT5_BRIDGE_TOKEN || 'bmh_mt5_secure_bridge_token_2026',
   appDownloadBaseUrl: process.env.APP_DOWNLOAD_BASE_URL || 'http://localhost:4000/updates',
+  fmpApiKey: process.env.FMP_API_KEY || 'LyksDcgYDBUuRO7BwEsaCH2FgPLzysd4',
 };

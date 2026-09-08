@@ -76,6 +76,14 @@ server.listen(config.port, () => {
   console.log(`   - WebSocket:     ws://localhost:${config.port}/ws`);
   console.log(`   - Health Check:  http://localhost:${config.port}/health`);
   console.log(`=======================================================`);
+
+  // Tự động đồng bộ Lịch kinh tế FMP Real-time khi khởi động và lặp lại mỗi 15 phút
+  import('./services/calendar.service').then(({ syncEconomicCalendar }) => {
+    syncEconomicCalendar().catch(e => console.warn('Khởi tạo lịch kinh tế FMP thất bại:', e.message));
+    setInterval(() => {
+      syncEconomicCalendar().catch(e => console.warn('Lỗi định kỳ lịch kinh tế:', e.message));
+    }, 15 * 60 * 1000);
+  });
 });
 
 export default app;

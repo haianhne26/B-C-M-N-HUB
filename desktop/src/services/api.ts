@@ -168,9 +168,13 @@ export const api = {
     return request(`/courses/${slug}`);
   },
 
-  // 6. Economic Calendar
-  async getEconomicEvents(impact = '', dateFilter = 'today') {
-    return request(`/calendar?impact=${impact}&dateFilter=${dateFilter}`);
+  // 6. Economic Calendar (Real-Time FMP)
+  async getEconomicEvents(impact = '', dateFilter = 'today', currency = '') {
+    return request(`/calendar?impact=${impact}&dateFilter=${dateFilter}&currency=${currency}`);
+  },
+
+  async syncEconomicCalendar() {
+    return request('/calendar/sync', { method: 'POST' });
   },
 
   // 7. IB System (CRM & Landing Page Builder)

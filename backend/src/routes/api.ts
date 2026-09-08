@@ -5,7 +5,7 @@ import { listUsers, toggleUserStatus, resetUserPassword } from '../controllers/u
 import { pushFromEA, getAccountSummary, getPositions, getTradeHistory } from '../controllers/mt5.controller';
 import { analyzeChart, chatFollowUp, getConversations, getConversationMessages } from '../controllers/ai.controller';
 import { listCourses, getCourseDetail } from '../controllers/course.controller';
-import { listEconomicEvents } from '../controllers/calendar.controller';
+import { listEconomicEvents, triggerEconomicSync } from '../controllers/calendar.controller';
 import {
   listIBLandingPages,
   createIBLandingPage,
@@ -69,9 +69,10 @@ router.get('/courses', authenticateToken, listCourses);
 router.get('/courses/:slug', authenticateToken, getCourseDetail);
 
 // ==========================================
-// 7. Economic Calendar
+// 7. Economic Calendar (Real-Time FMP)
 // ==========================================
 router.get('/calendar', authenticateToken, listEconomicEvents);
+router.post('/calendar/sync', authenticateToken, triggerEconomicSync);
 
 // ==========================================
 // 8. IB System (Landing Page Builder & CRM)
