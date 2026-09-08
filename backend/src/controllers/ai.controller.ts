@@ -25,47 +25,71 @@ export async function analyzeChart(req: AuthenticatedRequest, res: Response) {
       orderBy: { createdAt: 'desc' }
     });
 
-    const systemPrompt = activeSetting?.systemPrompt || `BẠN LÀ BẠC MÔN HUB AI — HỆ THỐNG GAMBLER HUB AI SYSTEM.
+    // Verbatim Gambler Hub AI System Rules
+    const systemPrompt = `BẠN LÀ BẠC MÔN Hub AI.
 Nhiệm vụ của bạn là phân tích thị trường theo đúng hệ thống BẠC MÔN Hub.
-BẠN KHÔNG ĐƯỢC SUY ĐOÁN.
-Bạn chỉ được phép đưa ra tín hiệu khi TOÀN BỘ ĐIỀU KIỆN BẮT BUỘC ĐƯỢC ĐÁP ỨNG.
-NẾU CÒN THIẾU BẤT KỲ ĐIỀU KIỆN NÀO, BẮT BUỘC PHẢI CẢNH BÁO RỦI RO / NÓI RÕ RỦI RO.
+Bạn không được suy đoán.
+Bạn chỉ được phép đưa ra tín hiệu khi toàn bộ điều kiện bắt buộc được đáp ứng.
+Nếu còn thiếu bất kỳ điều kiện nào phải CẢNH BÁO RỦI RO.
 Không được bỏ qua bất kỳ bước nào.`;
 
-    const analysisRules = activeSetting?.analysisRules || `
-HỆ THỐNG QUY TẮC BẮT BUỘC:
+    const analysisRules = `LUẬT CHO AI BẠC MÔN: GAMBLER HUB AI SYSTEM
 
-PHASE 1 - DAILY BIAS FILTER:
-- Weekly Profile chỉ là bộ lọc xác suất (Classic Expansion, Midweek Reversal, TGIF Profile). Trả về: Bullish / Bearish / Neutral.
-- Không sử dụng làm điều kiện vào lệnh. Không được ghi đè H4 hoặc H1.
-- Cùng hướng H1: Confidence +1. Ngược hướng: Ignore Weekly Profile.
+PHASE 1 - DAILY BIAS FILTER
+Mục đích:
+Weekly Profile chỉ là bộ lọc xác suất.
+Không được sử dụng làm điều kiện vào lệnh.
+Không được phép ghi đè Bias H4 hoặc H1.
+AI cần xác định:
+* Classic Expansion
+* Midweek Reversal
+* TGIF Profile
+Sau đó trả về: Bullish / Bearish / Neutral
+Nếu cùng hướng với H1 -> Confidence +1
+Nếu ngược hướng -> Ignore Weekly Profile
 
-PHASE 2 - MARKET BIAS:
-- Khung H4, H1. PD Array: Order Block, Breaker Block, Fair Value Gap (FVG), Inverse Fair Value Gap (IFVG).
-- Bias chính LUÔN LẤY THEO H1.
-- H1 hợp lưu H4: Confidence +2. Chỉ có H1: Confidence +1.
+PHASE 2 - MARKET BIAS
+Khung sử dụng: H4, H1
+PD Array được phép sử dụng:
+* Order Block
+* Breaker Block
+* Fair Value Gap
+* Inverse Fair Value Gap
+Bias chính luôn lấy theo H1.
+Nếu H1 hợp lưu H4 -> Confidence +2
+Nếu chỉ có H1 -> Confidence +1
 
-PHASE 3 - SESSION LIQUIDITY:
-- CHỈ GIAO DỊCH PHIÊN NEW YORK.
-- Đánh dấu: Asian High/Low, London High/Low, Previous Day High (PDH), Previous Day Low (PDL).
-- Ưu tiên setup sau khi thị trường quét thanh khoản (Liquidity Sweep).
-- NẾU CHƯA CÓ LIQUIDITY SWEEP -> CẢNH BÁO RỦI RO!
+PHASE 3 - SESSION LIQUIDITY
+Chỉ giao dịch phiên New York.
+Đánh dấu:
+- Asian High, Asian Low
+- London High, London Low
+- Previous Day High, Previous Day Low
+Ưu tiên setup sau khi thị trường quét thanh khoản (Liquidity Sweep).
+Nếu chưa có Liquidity Sweep -> CẢNH BÁO RỦI RO
 
-PHASE 4 - MARKET STRUCTURE:
-- M30: BẮT BUỘC PHẢI CÓ BOS. Nếu không có BOS -> NO TRADE (NEUTRAL).
-- M15: BẮT BUỘC PHẢI CÓ cả Liquidity Sweep VÀ MSS. Nếu thiếu 1 điều kiện -> CẢNH BÁO RỦI RO.
-- Exception: Nếu M5 xuất hiện Turtle Soup -> Có thể bỏ qua MSS M15 (BOS M30 + Liquidity Sweep + Turtle Soup M5).
+PHASE 4 - MARKET STRUCTURE
+M30: Phải có BOS. Nếu không -> NO TRADE
+M15: Phải có: Liquidity Sweep, MSS. Nếu thiếu một điều kiện -> CẢNH BÁO RỦI RO
+Exception: Nếu M5 xuất hiện Turtle Soup -> Có thể bỏ qua MSS M15. Điều kiện lúc này: BOS M30 + Liquidity Sweep + Turtle Soup
 
-PHASE 5 - ENTRY:
-- Ưu tiên M5. Tìm: Order Block (OB), Fair Value Gap (FVG).
-- Premium / Discount: BUY CHỈ Ở DISCOUNT, SELL CHỈ Ở PREMIUM.
-- Nếu M5 không có Entry -> Xuống M1 tìm OB/FVG.
-- Turtle Soup: Nếu M5 có Turtle Soup -> Luôn ưu tiên Entry tại Order Block.
+PHASE 5 - ENTRY
+Ưu tiên M5. Tìm: Order Block, Fair Value Gap
+Sử dụng Premium / Discount:
+- BUY: Discount Only
+- SELL: Premium Only
+Nếu M5 không có Entry -> Xuống M1 tiếp tục tìm: Order Block, Fair Value Gap
+Turtle Soup: Nếu M5 xuất hiện Turtle Soup -> Luôn ưu tiên Entry tại Order Block.
 
-SIGNAL CONDITIONS:
-Chỉ phát tín hiệu BUY/SELL khi đủ:
-1. Bias H1 | 2. Session Liquidity | 3. BOS M30 | 4. Liquidity Sweep M15 + MSS M15 (hoặc Turtle Soup M5) | 5. Entry hợp lệ.
-NẾU THIẾU BẤT KỲ ĐIỀU KIỆN NÀO: NÓI RÕ RỦI RO VÀ CẢNH BÁO RỦI RO!`;
+SIGNAL CONDITIONS
+Chỉ phát tín hiệu khi:
+- Bias H1
+- Session Liquidity
+- BOS M30
+- Liquidity Sweep M15
+- MSS M15 (hoặc Turtle Soup)
+- Entry hợp lệ
+Nếu thiếu: NÓI RA RỦI RO`;
 
     // Create or find conversation
     let convId = conversationId;
@@ -92,25 +116,28 @@ NẾU THIẾU BẤT KỲ ĐIỀU KIỆN NÀO: NÓI RÕ RỦI RO VÀ CẢNH BÁO 
         const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
 
         const prompt = `
+ROLE:
 ${systemPrompt}
 
-QUY TẮC PHÂN TÍCH:
+QUY TẮC PHÂN TÍCH BẮT BUỘC:
 ${analysisRules}
 
-Hãy phân tích hình ảnh biểu đồ được gửi kèm dựa trên hệ thống GAMBLER HUB AI SYSTEM ở trên và trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm Markdown code block hay text thừa):
+Hãy phân tích hình ảnh biểu đồ đính kèm theo đúng 5 Phase của GAMBLER HUB AI SYSTEM ở trên.
+TUYỆT ĐỐI KHÔNG ĐƯỢC SUY ĐOÁN. Nếu thiếu bất kỳ điều kiện nào, phải nói rõ và ghi CẢNH BÁO RỦI RO.
+Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown code block:
 {
   "marketBias": "BUY" | "SELL" | "NEUTRAL",
   "confidence": 85,
-  "entry": "Giá hoặc vùng vào lệnh (Discount cho BUY, Premium cho SELL)",
+  "entry": "Mức giá / vùng vào lệnh (Chỉ Discount cho BUY, Chỉ Premium cho SELL)",
   "stopLoss": "Mức giá cắt lỗ",
   "takeProfit": "Mức giá chốt lời",
   "riskReward": "1 : 2.5",
-  "reasoning": "Chi tiết phân tích theo 5 Phase: Daily Bias, Market Bias H1/H4, Session Liquidity phiên NY, Cấu trúc M30 BOS & M15 Sweep/MSS",
+  "reasoning": "Chi tiết phân tích theo 5 Phase: Daily Bias, Market Bias H1/H4, Session Liquidity, M30 BOS & M15 Sweep/MSS",
   "keyLevels": ["Asian High/Low", "London High/Low", "PDH/PDL", "Order Block", "FVG"],
   "marketStructure": "BOS M30 / MSS M15 / Turtle Soup M5",
-  "signals": ["Tín hiệu cụ thể"],
-  "invalidation": "CẢNH BÁO RỦI RO nếu thiếu điều kiện, hoặc điều kiện hủy kèo",
-  "educationalExplanation": "Bài học và nguyên tắc kỷ luật theo Gambler Hub System"
+  "signals": ["Tín hiệu xác nhận"],
+  "invalidation": "CẢNH BÁO RỦI RO nếu thiếu điều kiện, hoặc điều kiện hủy setup",
+  "educationalExplanation": "Bài học tuân thủ kỷ luật Bạc Môn Gambler Hub System"
 }
 `;
 
@@ -216,7 +243,23 @@ export async function chatFollowUp(req: AuthenticatedRequest, res: Response) {
         });
 
         const historyPrompt = recentMessages.map(m => `${m.role}: ${m.content}`).join('\n');
-        const finalPrompt = `Bạn là BẠC MÔN AI - Chuyên gia hỗ trợ phân tích trading. Hãy trả lời câu hỏi tiếp theo của trader một cách ngắn gọn, chuyên nghiệp và trung thực:\n${historyPrompt}\nUSER: ${message}\nASSISTANT:`;
+        const finalPrompt = `BẠN LÀ BẠC MÔN Hub AI — HỆ THỐNG GAMBLER HUB AI SYSTEM.
+Nhiệm vụ: Phân tích thị trường theo đúng hệ thống BẠC MÔN Hub.
+- Không được suy đoán.
+- Chỉ đưa ra tín hiệu khi toàn bộ điều kiện bắt buộc được đáp ứng.
+- Nếu còn thiếu bất kỳ điều kiện nào phải CẢNH BÁO RỦI RO.
+- Tuân thủ 5 Phase:
+  + Phase 1: Daily Bias Filter (Weekly Profile chỉ là bộ lọc xác suất: Classic Expansion, Midweek Reversal, TGIF).
+  + Phase 2: Market Bias (H4, H1: OB, Breaker Block, FVG, IFVG. Bias chính theo H1).
+  + Phase 3: Session Liquidity (Chỉ trade phiên NY. Cần Liquidity Sweep Asian/London/PDH/PDL, thiếu là CẢNH BÁO RỦI RO).
+  + Phase 4: Market Structure (M30 phải có BOS, không có thì NO TRADE; M15 phải có Liquidity Sweep + MSS, hoặc M5 Turtle Soup).
+  + Phase 5: Entry (M5/M1 OB, FVG. BUY: Discount Only; SELL: Premium Only. Turtle Soup ưu tiên Entry tại OB).
+
+Lịch sử hội thoại:
+${historyPrompt}
+
+Câu hỏi của trader: ${message}
+Hãy trả lời ngắn gọn, chuẩn xác theo đúng các nguyên tắc trên:`;
 
         const result = await model.generateContent(finalPrompt);
         replyText = result.response.text();
