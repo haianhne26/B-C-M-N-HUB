@@ -57,8 +57,8 @@ export const LandingBuilderView: React.FC = () => {
   };
 
   const copyUrl = (slugName: string, id: string) => {
-    // Trỏ về Web Frontend thay vì Backend API
-    const url = `http://localhost:5173/p/${slugName}`;
+    // Trỏ về Web Frontend (GitHub Pages) với HashRouter
+    const url = `https://haianhne26.github.io/B-C-M-N-HUB/#/p/${slugName}`;
     navigator.clipboard.writeText(url);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
