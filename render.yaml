@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: bacmonhub-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: MT5_BRIDGE_TOKEN
+        generateValue: true
+      - key: FMP_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false

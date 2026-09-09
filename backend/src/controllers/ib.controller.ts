@@ -101,6 +101,32 @@ export async function updateIBLandingPage(req: AuthenticatedRequest, res: Respon
   }
 }
 
+export async function deleteIBLandingPage(req: AuthenticatedRequest, res: Response) {
+  try {
+    const { id } = req.params;
+    const ibId = req.user?.id;
+
+    const page = await prisma.iBLandingPage.findUnique({ where: { id } });
+    if (!page) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy trang' });
+    }
+
+    // Bảo mật: Chỉ chính IB sở hữu hoặc OWNER mới được xóa
+    if (req.user?.role !== 'OWNER' && page.ibId !== ibId) {
+      return res.status(403).json({ success: false, message: 'Bạn không có quyền xóa trang này' });
+    }
+
+    // Xóa tất cả leads liên quan (cần cascade, nhưng prisma có thể chặn nếu chưa bật cascade. Ta xóa leads trước)
+    await prisma.lead.deleteMany({ where: { landingPageId: id } });
+
+    await prisma.iBLandingPage.delete({ where: { id } });
+
+    return res.json({ success: true, message: 'Đã xóa trang đích thành công' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: 'Lỗi khi xóa trang' });
+  }
+}
+
 // Public API: Lấy nội dung Landing Page cho khách xem (/p/:slug)
 export async function getPublicLandingPage(req: Request, res: Response) {
   try {

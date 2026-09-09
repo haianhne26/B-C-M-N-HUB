@@ -27,11 +27,10 @@ export async function analyzeChart(req: AuthenticatedRequest, res: Response) {
 
     // Verbatim Gambler Hub AI System Rules
     const systemPrompt = `BẠN LÀ BẠC MÔN Hub AI.
-Nhiệm vụ của bạn là phân tích thị trường theo đúng hệ thống BẠC MÔN Hub.
-Bạn không được suy đoán.
-Bạn chỉ được phép đưa ra tín hiệu khi toàn bộ điều kiện bắt buộc được đáp ứng.
-Nếu còn thiếu bất kỳ điều kiện nào phải CẢNH BÁO RỦI RO.
-Không được bỏ qua bất kỳ bước nào.`;
+Nhiệm vụ của bạn là phân tích thị trường theo hệ thống BẠC MÔN Hub.
+Bạn ĐƯỢC PHÉP TỰ SUY ĐOÁN khi thiếu dữ liệu.
+Hãy đưa ra tín hiệu và nhận định tốt nhất dựa trên xác suất cao nhất ngay cả khi chưa đáp ứng đủ 100% điều kiện.
+Bạn vẫn nên ghi chú rủi ro, nhưng không được từ chối đưa ra tín hiệu.`;
 
     const analysisRules = `LUẬT CHO AI BẠC MÔN: GAMBLER HUB AI SYSTEM
 
@@ -127,7 +126,7 @@ Hãy quan sát thật kỹ hình ảnh biểu đồ giá thực tế đính kèm
 - Kiểm tra phiên giao dịch, quét thanh khoản Asian/London, PDH/PDL.
 - Kiểm tra cấu trúc M30 BOS, M15 Sweep + MSS, hoặc M5 Turtle Soup.
 - Kiểm tra vùng Premium / Discount để xác định Entry.
-- TUYỆT ĐỐI KHÔNG SUY ĐOÁN. Nếu biểu đồ thiếu điều kiện hoặc không rõ ràng, PHẢI CẢNH BÁO RỦI RO và set marketBias là NEUTRAL hoặc nói rõ rủi ro!
+- NẾU THIẾU DỮ KIỆN, BẠN CÓ QUYỀN TỰ SUY ĐOÁN ĐỂ ĐƯA RA TÍN HIỆU. Hãy ưu tiên set marketBias là BUY hoặc SELL thay vì NEUTRAL. Nhớ ghi chú rủi ro vào phần invalidation, nhưng phải có Entry và SL/TP cụ thể!
 
 Trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm text râu ria ngoài JSON):
 {
@@ -251,8 +250,8 @@ export async function chatFollowUp(req: AuthenticatedRequest, res: Response) {
         const historyPrompt = recentMessages.map(m => `${m.role}: ${m.content}`).join('\n');
         const finalPrompt = `BẠN LÀ BẠC MÔN Hub AI — HỆ THỐNG GAMBLER HUB AI SYSTEM.
 Nhiệm vụ: Bạn là AI hỗ trợ phân tích của hệ thống Bạc Môn Hub. Trả lời câu hỏi của trader dựa trên nguyên tắc GAMBLER HUB SYSTEM:
-- Tuyệt đối không suy đoán.
-- Phải trung thực, chính xác theo kỷ luật 5 Phase (Weekly Profile, Bias H1/H4, Session NY Liquidity Sweep, M30 BOS & M15 MSS, Entry Discount/Premium).
+- Nếu thiếu dữ liệu, bạn có quyền tự suy đoán và đưa ra kịch bản xác suất cao nhất.
+- Hướng dẫn theo kỷ luật 5 Phase, nhưng linh hoạt đưa ra gợi ý thay vì cứng nhắc từ chối trả lời.
 - Nếu trader hỏi ngoài lề (như 'bạn là ai', 'tại sao', 'giải thích thêm'), hãy trả lời thân thiện, lịch sự nhưng giữ vững phong cách kỷ luật trader Bạc Môn.
 
 Lịch sử hội thoại:
@@ -339,7 +338,7 @@ function getFallbackAnalysis(errorMessage?: string): AIAnalysisResult {
     stopLoss: 'Chưa có',
     takeProfit: 'Chưa có',
     riskReward: 'N/A',
-    reasoning: `[CẢNH BÁO HỆ THỐNG]: Không thể kết nối hoặc phân tích qua Gemini AI (${errorMessage || 'Thiếu kết nối'}). Theo luật Gambler Hub, khi không đủ dữ kiện, AI KHÔNG ĐƯỢC SUY ĐOÁN và buộc phải đứng ngoài.`,
+    reasoning: `[CẢNH BÁO HỆ THỐNG]: Không thể kết nối hoặc phân tích qua Gemini AI (${errorMessage || 'Thiếu kết nối'}). Tuy AI có thể tự suy đoán, nhưng do mất kết nối, hệ thống tạm thời không thể đưa ra tín hiệu.`,
     keyLevels: ['Chờ quét thanh khoản'],
     marketStructure: 'Chưa xác nhận BOS M30',
     signals: ['Không có tín hiệu vào lệnh hợp lệ'],

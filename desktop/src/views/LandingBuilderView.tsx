@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Globe, Plus, ExternalLink, Copy, Check } from 'lucide-react';
+import { Globe, Plus, ExternalLink, Copy, Check, Trash2 } from 'lucide-react';
 
 export const LandingBuilderView: React.FC = () => {
   const [pages, setPages] = useState<any[]>([]);
@@ -8,6 +8,14 @@ export const LandingBuilderView: React.FC = () => {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [seoDescription, setSeoDescription] = useState('');
+  
+  // Customization fields
+  const [heroTitle, setHeroTitle] = useState('Đầu Tư Thông Minh Cùng Bạc Môn');
+  const [heroSubtitle, setHeroSubtitle] = useState('Hệ thống hỗ trợ giao dịch chuẩn xác');
+  const [heroBgUrl, setHeroBgUrl] = useState('');
+  const [benefitsList, setBenefitsList] = useState('Tín hiệu phân tích chuẩn\nHỗ trợ 1-1\nTham gia nhóm VIP miễn phí');
+  const [formTitle, setFormTitle] = useState('Đăng Ký Nhận Tư Vấn Miễn Phí');
+
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchPages = async () => {
@@ -26,10 +34,21 @@ export const LandingBuilderView: React.FC = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.createIBLandingPage({ title, slug, seoDescription });
+      const sections = [
+        { id: 'hero', type: 'Hero', title: heroTitle, subtitle: heroSubtitle, bgImage: heroBgUrl },
+        { id: 'benefits', type: 'Benefits', title: 'Tại Sao Chọn Chúng Tôi', items: benefitsList.split('\n').map(s => s.trim()).filter(Boolean) },
+        { id: 'lead-form', type: 'LeadForm', title: formTitle }
+      ];
+
+      await api.createIBLandingPage({ title, slug, seoDescription, sections });
       setTitle('');
       setSlug('');
       setSeoDescription('');
+      setHeroTitle('Đầu Tư Thông Minh Cùng Bạc Môn');
+      setHeroSubtitle('Hệ thống hỗ trợ giao dịch chuẩn xác');
+      setHeroBgUrl('');
+      setBenefitsList('Tín hiệu phân tích chuẩn\nHỗ trợ 1-1\nTham gia nhóm VIP miễn phí');
+      setFormTitle('Đăng Ký Nhận Tư Vấn Miễn Phí');
       setShowCreate(false);
       fetchPages();
     } catch (err: any) {
@@ -38,10 +57,22 @@ export const LandingBuilderView: React.FC = () => {
   };
 
   const copyUrl = (slugName: string, id: string) => {
-    const url = `http://localhost:4000/api/p/${slugName}`;
+    // Trỏ về Web Frontend thay vì Backend API
+    const url = `http://localhost:5173/p/${slugName}`;
     navigator.clipboard.writeText(url);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa Landing Page "${title}" không? Các Leads liên quan sẽ bị xóa.`)) {
+      try {
+        await api.deleteIBLandingPage(id);
+        fetchPages();
+      } catch (err: any) {
+        alert(err.message);
+      }
+    }
   };
 
   return (
@@ -97,6 +128,62 @@ export const LandingBuilderView: React.FC = () => {
                 onChange={(e) => setSeoDescription(e.target.value)}
               />
             </div>
+            
+            <h4 style={{ fontSize: '1rem', fontWeight: 600, margin: '20px 0 16px', color: '#A78BFA' }}>Nội dung trang web</h4>
+            <div className="form-group">
+              <label className="form-label">Tiêu đề Hero (Phần đầu trang)</label>
+              <input
+                type="text"
+                className="form-input"
+                value={heroTitle}
+                onChange={(e) => setHeroTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="form-group">
+                <label className="form-label">Phụ đề Hero</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={heroSubtitle}
+                  onChange={(e) => setHeroSubtitle(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Ảnh nền Hero (Link ảnh URL)</label>
+                <input
+                  type="url"
+                  className="form-input"
+                  placeholder="https://..."
+                  value={heroBgUrl}
+                  onChange={(e) => setHeroBgUrl(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Danh sách lợi ích (Mỗi dòng một lợi ích)</label>
+              <textarea
+                className="form-input"
+                rows={3}
+                value={benefitsList}
+                onChange={(e) => setBenefitsList(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Tiêu đề Form Đăng ký</label>
+              <input
+                type="text"
+                className="form-input"
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                required
+              />
+            </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
               <button type="button" className="btn-desk btn-desk-secondary" onClick={() => setShowCreate(false)}>Hủy</button>
               <button type="submit" className="btn-desk btn-desk-primary">Lưu & Xuất bản</button>
@@ -127,6 +214,14 @@ export const LandingBuilderView: React.FC = () => {
                 {p._count?.leads || 0} Lead đã đăng ký
               </span>
               <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  className="btn-desk btn-desk-secondary btn-desk-sm"
+                  onClick={() => handleDelete(p.id, p.title)}
+                  title="Xóa trang đích"
+                  style={{ padding: '0 8px', color: '#EF4444' }}
+                >
+                  <Trash2 size={14} />
+                </button>
                 <button
                   className="btn-desk btn-desk-secondary btn-desk-sm"
                   onClick={() => copyUrl(p.slug, p.id)}

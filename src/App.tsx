@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/global.css';
 import './styles/components.css';
 
@@ -11,22 +12,32 @@ import { DownloadSection } from './components/Download';
 import { FAQ } from './components/FAQ';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
+import { DynamicLandingPage } from './views/DynamicLandingPage';
+
+const Home = () => (
+  <div className="app-layout">
+    <Navbar />
+    <main>
+      <Hero />
+      <Stats />
+      <Features />
+      <ProductShowcase />
+      <DownloadSection />
+      <FAQ />
+      <FinalCTA />
+    </main>
+    <Footer />
+  </div>
+);
 
 export const App: React.FC = () => {
   return (
-    <div className="app-layout">
-      <Navbar />
-      <main>
-        <Hero />
-        <Stats />
-        <Features />
-        <ProductShowcase />
-        <DownloadSection />
-        <FAQ />
-        <FinalCTA />
-      </main>
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/p/:slug" element={<DynamicLandingPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

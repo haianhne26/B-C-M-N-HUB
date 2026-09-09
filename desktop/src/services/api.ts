@@ -1,5 +1,5 @@
 // Typed API Client for BẠC MÔN HUB Desktop
-const API_BASE = 'http://localhost:4000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
 export function getAuthToken(): string | null {
   return localStorage.getItem('bmh_token');
@@ -168,6 +168,20 @@ export const api = {
     return request(`/courses/${slug}`);
   },
 
+  async createCourse(payload: { title: string; slug: string; description: string; thumbnailUrl?: string; category?: string; isPremium?: boolean }) {
+    return request('/courses', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async addLesson(courseId: string, payload: { title: string; videoUrl: string; isFreePreview?: boolean }) {
+    return request(`/courses/${courseId}/lessons`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
   // 6. Economic Calendar (Real-Time FMP)
   async getEconomicEvents(impact = '', dateFilter = 'today', currency = '') {
     return request(`/calendar?impact=${impact}&dateFilter=${dateFilter}&currency=${currency}`);
@@ -193,10 +207,23 @@ export const api = {
     return request('/ib/landing-pages');
   },
 
-  async createIBLandingPage(payload: { title: string; slug: string; seoDescription?: string }) {
+  async createIBLandingPage(payload: { title: string; slug: string; seoDescription?: string; themeConfig?: any; sections?: any }) {
     return request('/ib/landing-pages/create', {
       method: 'POST',
       body: JSON.stringify(payload)
+    });
+  },
+
+  async updateIBLandingPage(id: string, payload: any) {
+    return request(`/ib/landing-pages/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async deleteIBLandingPage(id: string) {
+    return request(`/ib/landing-pages/${id}`, {
+      method: 'DELETE'
     });
   },
 

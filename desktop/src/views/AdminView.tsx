@@ -26,6 +26,21 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
   const [releaseNotes, setReleaseNotes] = useState('');
   const [isMandatory, setIsMandatory] = useState(false);
 
+  // Course Management State
+  const [courseTitle, setCourseTitle] = useState('');
+  const [courseSlug, setCourseSlug] = useState('');
+  const [courseDesc, setCourseDesc] = useState('');
+  const [courseCat, setCourseCat] = useState('Trading');
+  const [courseThumb, setCourseThumb] = useState('');
+  const [coursePremium, setCoursePremium] = useState(false);
+
+  // Add Lesson State
+  const [lessonCourseId, setLessonCourseId] = useState('');
+  const [lessonTitle, setLessonTitle] = useState('');
+  const [lessonVideoUrl, setLessonVideoUrl] = useState('');
+  const [lessonPreview, setLessonPreview] = useState(false);
+  const [allCourses, setAllCourses] = useState<any[]>([]);
+
   useEffect(() => {
     setActiveTab(subView);
   }, [subView]);
@@ -46,6 +61,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
       } else if (activeTab === 'keys') {
         const res = await api.listKeys();
         setKeys(res.data || []);
+      } else if (activeTab === 'courses') {
+        const res = await api.getCourses();
+        setAllCourses(res.data || []);
       } else if (activeTab === 'logs') {
         const res = await api.getAuditLogs();
         setLogs(res.data || []);
@@ -114,6 +132,48 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
     }
   };
 
+  const handleCreateCourse = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.createCourse({
+        title: courseTitle,
+        slug: courseSlug,
+        description: courseDesc,
+        category: courseCat,
+        thumbnailUrl: courseThumb,
+        isPremium: coursePremium
+      });
+      alert(`Đã tải lên khóa học "${courseTitle}" thành công!`);
+      setCourseTitle('');
+      setCourseSlug('');
+      setCourseDesc('');
+      setCourseCat('Trading');
+      setCourseThumb('');
+      setCoursePremium(false);
+      loadTabData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleAddLesson = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!lessonCourseId) return alert('Vui lòng chọn khóa học');
+    try {
+      await api.addLesson(lessonCourseId, {
+        title: lessonTitle,
+        videoUrl: lessonVideoUrl,
+        isFreePreview: lessonPreview
+      });
+      alert(`Đã thêm bài học "${lessonTitle}" thành công!`);
+      setLessonTitle('');
+      setLessonVideoUrl('');
+      setLessonPreview(false);
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -149,6 +209,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
             onClick={() => setActiveTab('updates')}
           >
             Cập nhật App
+          </button>
+          <button
+            className={`btn-desk ${activeTab === 'courses' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
+            onClick={() => setActiveTab('courses')}
+          >
+            Khóa Học
           </button>
           <button
             className={`btn-desk ${activeTab === 'logs' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
@@ -459,6 +525,91 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
             </div>
             <button type="submit" className="btn-desk btn-desk-primary">
               <DownloadCloud size={16} /> Xuất bản bản cập nhật
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Tab: Courses */}
+      {activeTab === 'courses' && (
+        <div className="app-card" style={{ maxWidth: 700 }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Tải Lên Khóa Học Mới</h3>
+          <form onSubmit={handleCreateCourse}>
+            <div className="form-group">
+              <label className="form-label">Tiêu đề khóa học</label>
+              <input type="text" className="form-input" value={courseTitle} onChange={e => {
+                setCourseTitle(e.target.value);
+                if (!courseSlug || courseSlug.length < 3) {
+                  setCourseSlug(e.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").replace(/ /g, '-').replace(/[^a-z0-9-]/g, ''));
+                }
+              }} required />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Đường dẫn (Slug)</label>
+              <input type="text" className="form-input" value={courseSlug} onChange={e => {
+                const val = e.target.value;
+                setCourseSlug(val.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").replace(/ /g, '-').replace(/[^a-z0-9-]/g, ''));
+              }} required />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Mô tả ngắn</label>
+              <textarea className="form-input" rows={3} value={courseDesc} onChange={e => setCourseDesc(e.target.value)} required />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="form-group">
+                <label className="form-label">Danh mục</label>
+                <input type="text" className="form-input" value={courseCat} onChange={e => setCourseCat(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Ảnh bìa (URL)</label>
+                <input type="text" className="form-input" value={courseThumb} onChange={e => setCourseThumb(e.target.value)} />
+              </div>
+            </div>
+            <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <input type="checkbox" id="coursePremium" checked={coursePremium} onChange={e => setCoursePremium(e.target.checked)} />
+              <label htmlFor="coursePremium" style={{ fontSize: '0.875rem', cursor: 'pointer', color: '#F59E0B', fontWeight: 600 }}>Khóa học Premium (Yêu cầu có License KEY)</label>
+            </div>
+            <button type="submit" className="btn-desk btn-desk-primary">
+              <Plus size={16} /> Tải Lên Khóa Học
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Tab: Add Lesson */}
+      {activeTab === 'courses' && (
+        <div className="app-card" style={{ maxWidth: 700, marginTop: '20px' }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Thêm Video Bài Học (YouTube)</h3>
+          <form onSubmit={handleAddLesson}>
+            <div className="form-group">
+              <label className="form-label">Chọn Khóa Học</label>
+              <select 
+                className="form-input" 
+                value={lessonCourseId} 
+                onChange={e => setLessonCourseId(e.target.value)}
+                required
+                style={{ background: '#1B1A30', color: '#fff', border: '1px solid var(--border-subtle)' }}
+              >
+                <option value="" disabled>-- Chọn khóa học --</option>
+                {allCourses.map(c => (
+                  <option key={c.id} value={c.id}>{c.title}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Tên bài học</label>
+              <input type="text" className="form-input" value={lessonTitle} onChange={e => setLessonTitle(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Link YouTube (URL)</label>
+              <input type="url" className="form-input" placeholder="https://youtu.be/..." value={lessonVideoUrl} onChange={e => setLessonVideoUrl(e.target.value)} required />
+            </div>
+            <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <input type="checkbox" id="lessonPreview" checked={lessonPreview} onChange={e => setLessonPreview(e.target.checked)} />
+              <label htmlFor="lessonPreview" style={{ fontSize: '0.875rem', cursor: 'pointer' }}>Cho phép xem thử miễn phí (Free Preview)</label>
+            </div>
+            <button type="submit" className="btn-desk btn-desk-primary">
+              <Plus size={16} /> Lưu Bài Học
             </button>
           </form>
         </div>

@@ -4,12 +4,13 @@ import { activateKey, createKey, listKeys, revokeKey, resetKeyDevices } from '..
 import { listUsers, toggleUserStatus, resetUserPassword } from '../controllers/user.controller';
 import { pushFromEA, getAccountSummary, getPositions, getTradeHistory } from '../controllers/mt5.controller';
 import { analyzeChart, chatFollowUp, getConversations, getConversationMessages } from '../controllers/ai.controller';
-import { listCourses, getCourseDetail } from '../controllers/course.controller';
+import { listCourses, getCourseDetail, createCourse, addLesson } from '../controllers/course.controller';
 import { listEconomicEvents, triggerEconomicSync } from '../controllers/calendar.controller';
 import {
   listIBLandingPages,
   createIBLandingPage,
   updateIBLandingPage,
+  deleteIBLandingPage,
   getPublicLandingPage,
   submitLeadForm,
   listIBLeads,
@@ -66,6 +67,8 @@ router.get('/ai/conversations/:id', authenticateToken, requireServiceLicense('ai
 // 6. Courses & Education
 // ==========================================
 router.get('/courses', authenticateToken, listCourses);
+router.post('/courses', authenticateToken, requirePermission(PERMISSIONS.COURSES_CREATE), createCourse);
+router.post('/courses/:courseId/lessons', authenticateToken, requirePermission(PERMISSIONS.COURSES_CREATE), addLesson);
 router.get('/courses/:slug', authenticateToken, getCourseDetail);
 
 // ==========================================
@@ -80,6 +83,7 @@ router.post('/calendar/sync', authenticateToken, triggerEconomicSync);
 router.get('/ib/landing-pages', authenticateToken, requirePermission(PERMISSIONS.LANDING_CREATE), listIBLandingPages);
 router.post('/ib/landing-pages/create', authenticateToken, requirePermission(PERMISSIONS.LANDING_CREATE), createIBLandingPage);
 router.put('/ib/landing-pages/:id', authenticateToken, requirePermission(PERMISSIONS.LANDING_EDIT), updateIBLandingPage);
+router.delete('/ib/landing-pages/:id', authenticateToken, requirePermission(PERMISSIONS.LANDING_EDIT), deleteIBLandingPage);
 router.get('/p/:slug', getPublicLandingPage); // Public view
 router.post('/leads/submit', submitLeadForm); // Public lead submit
 router.get('/ib/leads', authenticateToken, requirePermission(PERMISSIONS.CRM_VIEW), listIBLeads);
