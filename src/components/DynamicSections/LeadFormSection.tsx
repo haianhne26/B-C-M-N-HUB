@@ -15,7 +15,7 @@ export const LeadFormSection: React.FC<LeadFormSectionProps> = ({ title, pageSlu
     setStatus('loading');
     
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://bacmonhub-backend.onrender.com/api';
       const res = await fetch(`${apiUrl}/leads/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -13,7 +13,7 @@ export const DynamicLandingPage: React.FC = () => {
   useEffect(() => {
     const fetchPageData = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://bacmonhub-backend.onrender.com/api';
         const res = await fetch(`${apiUrl}/p/${slug}`);
         const result = await res.json();
         if (result.success && result.data) {
