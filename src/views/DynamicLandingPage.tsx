@@ -12,6 +12,7 @@ export const DynamicLandingPage: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [totalLeads, setTotalLeads] = useState<number>(667); // Mặc định FOMO
 
   useEffect(() => {
     const fetchPageData = async () => {
@@ -42,6 +43,13 @@ export const DynamicLandingPage: React.FC = () => {
     if (slug) {
       fetchPageData();
     }
+
+    // Fetch tổng số Lead toàn hệ thống (public, không cần đăng nhập)
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://bacmonhub-backend.onrender.com/api';
+    fetch(`${apiUrl}/stats/total-leads`)
+      .then(r => r.json())
+      .then(r => { if (r.success && r.data?.total) setTotalLeads(r.data.total); })
+      .catch(() => {}); // Nếu lỗi thì giữ giá trị mặc định
   }, [slug]);
 
   if (loading) {
@@ -105,7 +113,7 @@ export const DynamicLandingPage: React.FC = () => {
               />
             );
           case 'Countdown':
-            return <CountdownSection key={section.id} {...section.props} />;
+            return <CountdownSection key={section.id} {...(section.props || {})} slotsBooked={totalLeads} />;
           case 'Topics':
             return <TopicsSection key={section.id} {...section.props} />;
           case 'MentorProfile':
