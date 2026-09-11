@@ -369,3 +369,16 @@ export async function updateLeadTags(req: AuthenticatedRequest, res: Response) {
     return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật thẻ' });
   }
 }
+
+// -------------------------------------------------------------
+// Public Stats: Tổng số Lead toàn hệ thống
+// -------------------------------------------------------------
+export async function getTotalLeadCount(req: Request, res: Response) {
+  try {
+    const totalLeads = await prisma.lead.count();
+    return res.json({ success: true, data: { total: totalLeads } });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: 'Lỗi khi lấy thống kê' });
+  }
+}
+

@@ -15,7 +15,8 @@ import {
   submitLeadForm,
   listIBLeads,
   updateLeadStatus,
-  updateLeadTags
+  updateLeadTags,
+  getTotalLeadCount
 } from '../controllers/ib.controller';
 import { getLatestVersion, publishNewVersion } from '../controllers/update.controller';
 import { getAdminOverview, getAuditLogs } from '../controllers/admin.controller';
@@ -92,6 +93,7 @@ router.post('/leads/submit', submitLeadForm); // Public lead submit
 router.get('/ib/leads', authenticateToken, requirePermission(PERMISSIONS.CRM_VIEW), listIBLeads);
 router.patch('/ib/leads/:id/status', authenticateToken, requirePermission(PERMISSIONS.CRM_EDIT), updateLeadStatus);
 router.patch('/ib/leads/:id/tags', authenticateToken, requirePermission(PERMISSIONS.CRM_EDIT), updateLeadTags);
+router.get('/stats/total-leads', getTotalLeadCount); // Public stats endpoint
 
 // ==========================================
 // 9. Auto Update
