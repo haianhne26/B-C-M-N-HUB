@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '../db';
 import { AuthenticatedRequest } from '../middlewares/auth';
 import { logAudit } from '../middlewares/audit';
+import { generateBMHKey } from './license.controller';
 
 export async function listUsers(req: AuthenticatedRequest, res: Response) {
   try {
@@ -151,3 +152,85 @@ export async function resetUserPassword(req: AuthenticatedRequest, res: Response
     return res.status(500).json({ success: false, message: 'Lỗi khi đặt lại mật khẩu' });
   }
 }
+
+export async function updateUserRole(req: AuthenticatedRequest, res: Response) {
+  try {
+    const { id } = req.params;
+    const { role } = req.body; // 'OWNER', 'IB', 'USER'
+
+    if (!['OWNER', 'IB', 'USER'].includes(role)) {
+      return res.status(400).json({ success: false, message: 'Vai trò không hợp lệ' });
+    }
+
+    const targetUser = await prisma.user.findUnique({ where: { id } });
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+    }
+
+    if (targetUser.role === 'OWNER' && role !== 'OWNER') {
+      const ownerCount = await prisma.user.count({ where: { role: 'OWNER' } });
+      if (ownerCount <= 1) {
+        return res.status(403).json({ success: false, message: 'Hệ thống phải có ít nhất 1 OWNER' });
+      }
+    }
+
+    const updated = await prisma.user.update({
+      where: { id },
+      data: { role }
+    });
+
+    // Reset sessions to force relogin with new permissions
+    await prisma.session.deleteMany({ where: { userId: id } });
+
+    await logAudit(req.user?.id || null, 'USER_ROLE_CHANGED', 'User', id, { from: targetUser.role, to: role });
+
+    return res.json({
+      success: true,
+      message: `Đã thay đổi vai trò người dùng thành: ${role}`,
+      data: updated
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật vai trò người dùng' });
+  }
+}
+
+export async function assignUserLicense(req: AuthenticatedRequest, res: Response) {
+  try {
+    const { id } = req.params;
+    
+    const targetUser = await prisma.user.findUnique({ where: { id } });
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+    }
+
+    // 1 year from now
+    const expiresAt = new Date();
+    expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
+    const newKey = generateBMHKey();
+    const createdKey = await prisma.licenseKey.create({
+      data: {
+        keyCode: newKey,
+        status: 'ACTIVE',
+        userId: targetUser.id,
+        createdById: req.user?.id || targetUser.id,
+        activatedAt: new Date(),
+        expiresAt: expiresAt,
+        maxDevices: 2,
+        allowedServices: JSON.stringify(['trading', 'ai', 'courses', 'calendar']),
+        notes: 'Cấp nhanh từ Admin Dashboard',
+      }
+    });
+
+    await logAudit(req.user?.id || null, 'LICENSE_FAST_ASSIGNED', 'LicenseKey', createdKey.id, { userId: targetUser.id });
+
+    return res.json({
+      success: true,
+      message: `Đã cấp mới và kích hoạt License KEY cho người dùng thành công`,
+      data: createdKey
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: 'Lỗi khi cấp License KEY' });
+  }
+}
+

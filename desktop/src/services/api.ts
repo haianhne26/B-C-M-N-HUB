@@ -203,6 +203,13 @@ export const api = {
     });
   },
 
+  async updateLeadTags(id: string, tags: { name: string; color?: string }[]) {
+    return request(`/ib/leads/${id}/tags`, {
+      method: 'PATCH',
+      body: JSON.stringify({ tags })
+    });
+  },
+
   async getIBLandingPages() {
     return request('/ib/landing-pages');
   },
@@ -247,6 +254,19 @@ export const api = {
     return request(`/users/${id}/reset-password`, {
       method: 'POST',
       body: JSON.stringify({ newPassword })
+    });
+  },
+
+  async updateUserRole(id: string, role: string) {
+    return request(`/users/${id}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role })
+    });
+  },
+
+  async assignKeyToUser(id: string) {
+    return request(`/users/${id}/assign-key`, {
+      method: 'POST'
     });
   },
 

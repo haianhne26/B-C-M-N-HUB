@@ -10,6 +10,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
   const [activeTab, setActiveTab] = useState(subView);
   const [overview, setOverview] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
+  const [roleFilter, setRoleFilter] = useState<string>('ALL');
   const [keys, setKeys] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,7 +48,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
 
   useEffect(() => {
     loadTabData();
-  }, [activeTab]);
+  }, [activeTab, roleFilter]);
 
   const loadTabData = async () => {
     setLoading(true);
@@ -56,7 +57,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
         const res = await api.getAdminOverview();
         setOverview(res.data);
       } else if (activeTab === 'users') {
-        const res = await api.getUsers();
+        const roleQuery = roleFilter === 'ALL' ? '' : roleFilter;
+        const res = await api.getUsers(1, 50, '', roleQuery);
         setUsers(res.data || []);
       } else if (activeTab === 'keys') {
         const res = await api.listKeys();
@@ -109,6 +111,28 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
     try {
       await api.resetUserPassword(id, pass);
       alert('Đã cập nhật mật khẩu thành công!');
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleUpdateRole = async (id: string, newRole: string) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn chuyển quyền người dùng này thành ${newRole}?`)) return;
+    try {
+      await api.updateUserRole(id, newRole);
+      alert(`Đã cấp quyền ${newRole} thành công!`);
+      loadTabData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleAssignKey = async (id: string) => {
+    if (!window.confirm('Bạn có chắc chắn muốn tự động tạo và gán 1 License KEY (Hạn 1 năm) cho người dùng này không?')) return;
+    try {
+      await api.assignKeyToUser(id);
+      alert('Đã sinh và gán KEY thành công!');
+      loadTabData();
     } catch (err: any) {
       alert(err.message);
     }
@@ -285,6 +309,19 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
       {/* Tab: Users */}
       {activeTab === 'users' && (
         <div className="app-table-wrapper">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+            <select 
+              className="form-input" 
+              style={{ width: '200px' }}
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+            >
+              <option value="ALL">Tất cả vai trò</option>
+              <option value="USER">Chỉ hiện USER</option>
+              <option value="IB">Chỉ hiện IB</option>
+              <option value="OWNER">Chỉ hiện OWNER</option>
+            </select>
+          </div>
           <table className="app-table">
             <thead>
               <tr>
@@ -304,7 +341,20 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{u.email}</div>
                   </td>
                   <td>
-                    <span className={`role-badge ${u.role}`}>{u.role}</span>
+                    {u.role === 'OWNER' ? (
+                      <span className="role-badge OWNER">OWNER</span>
+                    ) : (
+                      <select 
+                        className="form-input"
+                        style={{ padding: '4px 8px', fontSize: '0.75rem', height: 'auto', backgroundColor: '#1E1B2E', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
+                        value={u.role}
+                        onChange={(e) => handleUpdateRole(u.id, e.target.value)}
+                      >
+                        <option value="USER">USER</option>
+                        <option value="IB">IB</option>
+                        <option value="OWNER">OWNER</option>
+                      </select>
+                    )}
                   </td>
                   <td>
                     <span style={{
@@ -319,7 +369,18 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
                     </span>
                   </td>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
-                    {u.activeLicenseKey || '—'}
+                    {u.activeLicenseKey ? (
+                      u.activeLicenseKey
+                    ) : (
+                      <button 
+                        className="btn-desk btn-desk-primary btn-desk-sm" 
+                        onClick={() => handleAssignKey(u.id)}
+                        style={{ padding: '4px 8px', fontSize: '0.75rem' }}
+                      >
+                        <Plus size={12} style={{ display: 'inline', marginRight: '4px' }} />
+                        Cấp KEY nhanh
+                      </button>
+                    )}
                   </td>
                   <td style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
                     {u.devices?.length || 0} máy

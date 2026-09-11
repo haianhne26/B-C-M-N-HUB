@@ -422,47 +422,386 @@ body.desktop-body {
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
 }
 
-/* Kanban Board for IB CRM */
-.kanban-board {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
-  overflow-x: auto;
-  min-height: 500px;
-}
-
-.kanban-col {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 14px;
+/* CRM Redesign Styles */
+.crm-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  height: 100%;
 }
 
-.kanban-col-header {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  text-transform: uppercase;
+.crm-header-area {
+  margin-bottom: 24px;
+}
+
+.crm-tabs-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.crm-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.crm-tab-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.crm-tab-btn.active {
+  background: rgba(124, 58, 237, 0.1);
+  color: #FFFFFF;
+  border-color: rgba(124, 58, 237, 0.4);
+}
+
+.crm-tab-count {
+  margin-left: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: inherit;
+}
+
+.crm-tab-btn.active .crm-tab-count {
+  background: rgba(124, 58, 237, 0.2);
+  color: #C4B5FD;
+}
+
+.crm-table-card {
+  background: #FFFFFF;
+  color: #1F2937;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Force light mode styles on components inside the white card */
+.crm-table-card input[type="text"],
+.crm-table-card select {
+  background: #FFFFFF;
+  color: #1F2937;
+  border: 1px solid #E5E7EB;
+}
+
+.crm-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.crm-search-box {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.kanban-card {
-  background: #1B1A30;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 10px;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
   border-radius: var(--radius-md);
-  padding: 14px;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  padding: 6px 12px;
+  width: 300px;
 }
 
-.kanban-card:hover {
-  border-color: var(--primary);
-  transform: translateY(-2px);
+.crm-search-box input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.875rem;
+  outline: none;
+  padding: 4px 0;
+  color: #1F2937;
+}
+
+.crm-toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.crm-icon-btn {
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crm-icon-btn:hover {
+  background: #F3F4F6;
+  color: #1F2937;
+}
+
+.crm-table-wrapper {
+  overflow-x: auto;
+  flex: 1;
+}
+
+.crm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.crm-table th {
+  padding: 14px 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  text-align: left;
+  border-bottom: 2px solid #F3F4F6;
+  white-space: nowrap;
+}
+
+.crm-table td {
+  padding: 16px 16px;
+  border-bottom: 1px solid #F3F4F6;
+  vertical-align: middle;
+}
+
+.crm-table tr:hover td {
+  background: #F9FAFB;
+}
+
+.crm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.crm-badge-blue { background: #DBEAFE; color: #2563EB; }
+.crm-badge-gray { background: #F3F4F6; color: #4B5563; }
+.crm-badge-orange { background: #FFEDD5; color: #EA580C; }
+.crm-badge-green { background: #D1FAE5; color: #059669; }
+
+/* Cho phép select hiển thị như một badge thực sự */
+.crm-badge-inline {
+  cursor: pointer;
+  background-color: inherit;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border: none;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.crm-channel-badge {
+  background: #FFF7ED;
+  color: #C2410C;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.crm-tag-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px dashed #D1D5DB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9CA3AF;
+  font-size: 0.6rem;
+  cursor: pointer;
+}
+
+.crm-tag-icon:hover {
+  background: #F3F4F6;
+}
+
+.crm-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.crm-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #6B7280;
+  font-size: 0.8125rem;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.crm-action-btn:hover {
+  background: #F3F4F6;
+  border-color: #E5E7EB;
+  color: #1F2937;
+}
+
+.crm-action-btn-icon {
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.crm-action-btn-icon:hover {
+  color: #1F2937;
+  background: #F3F4F6;
+}
+
+.crm-table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #FFFFFF;
+  border-top: 1px solid #E5E7EB;
+  font-size: 0.8125rem;
+  color: #6B7280;
+}
+
+/* Tag Modal Styles */
+.crm-tag-modal {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.crm-tag-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.crm-tag-modal-body {
+  padding: 24px;
+}
+
+.crm-tag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.crm-tag-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  color: #374151;
+}
+
+.crm-tag-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #D1D5DB;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.crm-tag-checkbox:checked {
+  background: #F97316;
+  border-color: #F97316;
+}
+
+.crm-tag-checkbox:checked::after {
+  content: '✓';
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.crm-tag-modal-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px 20px;
+}
+
+.crm-btn-orange {
+  background: #F97316;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.crm-btn-orange:hover {
+  background: #EA580C;
+}
+
+.crm-btn-outline {
+  background: transparent;
+  color: #374151;
+  border: 1px solid #D1D5DB;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.crm-btn-outline:hover {
+  background: #F3F4F6;
 }

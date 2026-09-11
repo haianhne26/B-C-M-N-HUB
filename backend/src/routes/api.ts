@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { register, login, me, logout } from '../controllers/auth.controller';
 import { activateKey, createKey, listKeys, revokeKey, resetKeyDevices } from '../controllers/license.controller';
-import { listUsers, toggleUserStatus, resetUserPassword } from '../controllers/user.controller';
+import { listUsers, toggleUserStatus, resetUserPassword, updateUserRole, assignUserLicense } from '../controllers/user.controller';
 import { pushFromEA, getAccountSummary, getPositions, getTradeHistory } from '../controllers/mt5.controller';
 import { analyzeChart, chatFollowUp, getConversations, getConversationMessages } from '../controllers/ai.controller';
 import { listCourses, getCourseDetail, createCourse, addLesson } from '../controllers/course.controller';
@@ -14,7 +14,8 @@ import {
   getPublicLandingPage,
   submitLeadForm,
   listIBLeads,
-  updateLeadStatus
+  updateLeadStatus,
+  updateLeadTags
 } from '../controllers/ib.controller';
 import { getLatestVersion, publishNewVersion } from '../controllers/update.controller';
 import { getAdminOverview, getAuditLogs } from '../controllers/admin.controller';
@@ -46,6 +47,8 @@ router.post('/licenses/:id/reset-devices', authenticateToken, requirePermission(
 router.get('/users', authenticateToken, requirePermission(PERMISSIONS.USERS_VIEW), listUsers);
 router.patch('/users/:id/status', authenticateToken, requirePermission(PERMISSIONS.USERS_EDIT), toggleUserStatus);
 router.post('/users/:id/reset-password', authenticateToken, requirePermission(PERMISSIONS.USERS_EDIT), resetUserPassword);
+router.patch('/users/:id/role', authenticateToken, requirePermission(PERMISSIONS.USERS_EDIT), updateUserRole);
+router.post('/users/:id/assign-key', authenticateToken, requirePermission(PERMISSIONS.USERS_MANAGE_KEYS), assignUserLicense);
 
 // ==========================================
 // 4. MT5 Bridge & Trading Dashboard
@@ -88,6 +91,7 @@ router.get('/p/:slug', getPublicLandingPage); // Public view
 router.post('/leads/submit', submitLeadForm); // Public lead submit
 router.get('/ib/leads', authenticateToken, requirePermission(PERMISSIONS.CRM_VIEW), listIBLeads);
 router.patch('/ib/leads/:id/status', authenticateToken, requirePermission(PERMISSIONS.CRM_EDIT), updateLeadStatus);
+router.patch('/ib/leads/:id/tags', authenticateToken, requirePermission(PERMISSIONS.CRM_EDIT), updateLeadTags);
 
 // ==========================================
 // 9. Auto Update

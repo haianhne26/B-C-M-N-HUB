@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../db';
 import { AuthenticatedRequest } from '../middlewares/auth';
 import { logAudit } from '../middlewares/audit';
+import { sendNewLeadNotification, sendDiscordLeadNotification } from '../services/email.service';
 
 // -------------------------------------------------------------
 // 1. IB Landing Page Builder
@@ -189,6 +190,32 @@ export async function submitLeadForm(req: Request, res: Response) {
 
     await logAudit(null, 'LEAD_SUBMITTED', 'Lead', lead.id, { ibId: page.ibId, phone });
 
+    // Gửi thông báo cho IB (bất đồng bộ - không chặn response)
+    prisma.user.findUnique({ where: { id: page.ibId }, select: { email: true, fullName: true } })
+      .then(ib => {
+        if (!ib) return;
+        // Gửi Gmail
+        if (ib.email) {
+          sendNewLeadNotification({
+            toEmail: ib.email,
+            ibName: ib.fullName || 'IB',
+            leadName: fullName,
+            leadPhone: phone,
+            leadEmail: email || null,
+            landingPageTitle: page.title,
+            notes: notes || null,
+          });
+        }
+        // Gửi Discord
+        sendDiscordLeadNotification({
+          ibName: ib.fullName || 'IB',
+          leadName: fullName,
+          leadPhone: phone,
+          landingPageTitle: page.title,
+        });
+      })
+      .catch(err => console.error('[Notify] Lỗi truy vấn IB:', err));
+
     return res.status(201).json({
       success: true,
       message: 'Cảm ơn bạn đã để lại thông tin! Chuyên viên hỗ trợ sẽ liên hệ với bạn sớm nhất.'
@@ -279,5 +306,63 @@ export async function updateLeadStatus(req: AuthenticatedRequest, res: Response)
     return res.json({ success: true, message: 'Cập nhật Lead thành công', data: updated });
   } catch (err: any) {
     return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật Lead' });
+  }
+}
+
+export async function updateLeadTags(req: AuthenticatedRequest, res: Response) {
+  try {
+    const { id } = req.params;
+    const { tags } = req.body; // array of { name: string, color: string }
+    const ibId = req.user?.id;
+
+    if (!ibId) return res.status(401).json({ success: false, message: 'Chưa đăng nhập' });
+
+    const lead = await prisma.lead.findUnique({ where: { id } });
+    if (!lead) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy Lead' });
+    }
+
+    if (req.user?.role !== 'OWNER' && lead.ibId !== ibId) {
+      return res.status(403).json({ success: false, message: 'Bạn không có quyền quản lý Lead này' });
+    }
+
+    const tagIds = [];
+    if (Array.isArray(tags)) {
+      for (const t of tags) {
+        let tagRecord = await prisma.tag.findUnique({
+          where: { ibId_name: { ibId: lead.ibId, name: t.name } }
+        });
+        if (!tagRecord) {
+          tagRecord = await prisma.tag.create({
+            data: { ibId: lead.ibId, name: t.name, color: t.color || '#7C3AED' }
+          });
+        }
+        tagIds.push(tagRecord.id);
+      }
+    }
+
+    // Xoá tag cũ của lead
+    await prisma.leadTag.deleteMany({ where: { leadId: id } });
+
+    // Gán tag mới
+    const uniqueTagIds = Array.from(new Set(tagIds));
+    if (uniqueTagIds.length > 0) {
+      await prisma.leadTag.createMany({
+        data: uniqueTagIds.map(tagId => ({ leadId: id, tagId })),
+        skipDuplicates: true,
+      });
+    }
+
+    const updatedLeadTags = await prisma.leadTag.findMany({
+      where: { leadId: id },
+      include: { tag: true }
+    });
+
+    const mappedTags = updatedLeadTags.map(lt => ({ id: lt.tag.id, name: lt.tag.name, color: lt.tag.color }));
+
+    return res.json({ success: true, message: 'Cập nhật thẻ thành công', data: mappedTags });
+  } catch (err: any) {
+    console.error('Update Tags Error:', err);
+    return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật thẻ' });
   }
 }
