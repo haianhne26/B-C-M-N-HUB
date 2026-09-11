@@ -13,6 +13,10 @@ export const LandingBuilderView: React.FC = () => {
   const [heroTitle, setHeroTitle] = useState('Đầu Tư Thông Minh Cùng Bạc Môn');
   const [heroSubtitle, setHeroSubtitle] = useState('Hệ thống hỗ trợ giao dịch chuẩn xác');
   const [heroBgUrl, setHeroBgUrl] = useState('');
+  
+  const [countdownDate, setCountdownDate] = useState('');
+  const [mentorName, setMentorName] = useState('Hải Anh');
+  
   const [benefitsList, setBenefitsList] = useState('Tín hiệu phân tích chuẩn\nHỗ trợ 1-1\nTham gia nhóm VIP miễn phí');
   const [formTitle, setFormTitle] = useState('Đăng Ký Nhận Tư Vấn Miễn Phí');
 
@@ -36,6 +40,9 @@ export const LandingBuilderView: React.FC = () => {
     try {
       const sections = [
         { id: 'hero', type: 'Hero', title: heroTitle, subtitle: heroSubtitle, bgImage: heroBgUrl },
+        { id: 'countdown', type: 'Countdown', props: { targetDate: countdownDate || undefined } },
+        { id: 'topics', type: 'Topics' },
+        { id: 'mentor', type: 'MentorProfile', props: { mentorName: mentorName } },
         { id: 'benefits', type: 'Benefits', title: 'Tại Sao Chọn Chúng Tôi', items: benefitsList.split('\n').map(s => s.trim()).filter(Boolean) },
         { id: 'lead-form', type: 'LeadForm', title: formTitle }
       ];
@@ -159,6 +166,28 @@ export const LandingBuilderView: React.FC = () => {
                   placeholder="https://..."
                   value={heroBgUrl}
                   onChange={(e) => setHeroBgUrl(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label">Ngày Livestream (Đếm ngược)</label>
+                <input
+                  type="datetime-local"
+                  className="form-input"
+                  value={countdownDate}
+                  onChange={(e) => setCountdownDate(e.target.value)}
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label">Tên Chuyên Gia (Mentor)</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={mentorName}
+                  onChange={(e) => setMentorName(e.target.value)}
+                  placeholder="Hải Anh"
                 />
               </div>
             </div>

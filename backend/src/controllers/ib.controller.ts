@@ -45,6 +45,9 @@ export async function createIBLandingPage(req: AuthenticatedRequest, res: Respon
 
     const defaultSections = sections || [
       { id: 'hero', type: 'Hero', title: 'Đầu Tư Thông Minh Cùng Bạc Môn', subtitle: 'Hệ thống hỗ trợ giao dịch chuẩn xác' },
+      { id: 'countdown', type: 'Countdown' },
+      { id: 'topics', type: 'Topics' },
+      { id: 'mentor', type: 'MentorProfile' },
       { id: 'benefits', type: 'Benefits', title: 'Tại Sao Chọn Chúng Tôi', items: ['Tín hiệu phân tích chuẩn', 'Hỗ trợ 1-1'] },
       { id: 'lead-form', type: 'LeadForm', title: 'Đăng Ký Nhận Tư Vấn Miễn Phí' }
     ];

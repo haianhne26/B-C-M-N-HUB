@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom';
 import { HeroSection } from '../components/DynamicSections/HeroSection';
 import { BenefitsSection } from '../components/DynamicSections/BenefitsSection';
 import { LeadFormSection } from '../components/DynamicSections/LeadFormSection';
+import { CountdownSection } from '../components/DynamicSections/CountdownSection';
+import { TopicsSection } from '../components/DynamicSections/TopicsSection';
+import { MentorProfileSection } from '../components/DynamicSections/MentorProfileSection';
 
 export const DynamicLandingPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -63,6 +66,15 @@ export const DynamicLandingPage: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0B0A14', color: '#fff', fontFamily: "'Inter', sans-serif" }}>
+      
+      {/* Header with Logo */}
+      <header style={{ 
+        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50, 
+        padding: '20px', display: 'flex', justifyContent: 'center' 
+      }}>
+        <img src="/logo.png" alt="Bạc Môn Đạo" style={{ height: '60px', objectFit: 'contain' }} />
+      </header>
+
       {/* Dynamic Sections Renderer */}
       {data.sections?.map((section: any) => {
         switch (section.type) {
@@ -92,6 +104,12 @@ export const DynamicLandingPage: React.FC = () => {
                 pageSlug={slug || ''}
               />
             );
+          case 'Countdown':
+            return <CountdownSection key={section.id} {...section.props} />;
+          case 'Topics':
+            return <TopicsSection key={section.id} {...section.props} />;
+          case 'MentorProfile':
+            return <MentorProfileSection key={section.id} {...section.props} />;
           default:
             return null;
         }
