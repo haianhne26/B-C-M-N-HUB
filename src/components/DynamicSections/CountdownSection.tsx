@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 interface CountdownSectionProps {
   title?: string;
-  targetDate?: string; // ISO format or string parsable by Date
+  targetDate?: string;
   slotsTotal?: number;
   slotsBooked?: number;
   platform?: string;
+  tickerLines?: string[];
+  embedded?: boolean;
 }
 
 export const CountdownSection: React.FC<CountdownSectionProps> = ({
   title = 'LỊCH PHÁT SÓNG',
-  targetDate = new Date(Date.now() + 86400000 * 3).toISOString(), // Mặc định 3 ngày sau
+  targetDate = new Date(Date.now() + 86400000 * 3).toISOString(),
   slotsTotal = 1000,
-  slotsBooked = 667,
-  platform = 'Hệ thống Bạc Môn Hub'
+  slotsBooked = 0,
+  platform = 'Hệ thống Bạc Môn Hub',
+  tickerLines = ['CHÚ Ý: KHÔNG PHÁT LẠI SAU KHI KẾT THÚC', 'ĐẶT CHỖ NGAY ĐỂ KHÔNG BỎ LỠ'],
+  embedded = false,
 }) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -29,7 +33,6 @@ export const CountdownSection: React.FC<CountdownSectionProps> = ({
   useEffect(() => {
     const target = new Date(targetDate);
     
-    // Format display
     setDateDisplay(target.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit' }));
     setTimeDisplay(target.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }));
 
@@ -54,65 +57,63 @@ export const CountdownSection: React.FC<CountdownSectionProps> = ({
     return () => clearInterval(timer);
   }, [targetDate]);
 
-  const slotsAvailable = Math.max(0, slotsTotal - slotsBooked);
-  const progressPercent = Math.min(100, Math.round((slotsBooked / slotsTotal) * 100));
+  const safeSlotsTotal = Math.max(1, Number(slotsTotal) || 1);
+  const safeSlotsBooked = Math.max(0, Number(slotsBooked) || 0);
+  const slotsAvailable = Math.max(0, safeSlotsTotal - safeSlotsBooked);
+  const progressPercent = Math.min(100, Math.round((safeSlotsBooked / safeSlotsTotal) * 100));
 
-  return (
-    <section style={{ padding: '60px 20px', background: '#0B0A14' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#A78BFA', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            <Calendar size={24} /> {title}
-          </h2>
+  const content = (
+    <>
+      {/* Ticker bar */}
+      <div className="ticker">
+        <div className="live">
+          <span className="d"></span> TRỰC TIẾP TRÊN {platform.toUpperCase()}
         </div>
+        <div className="track">
+          {/* Loop lines multiple times to fill ticker */}
+          {[...Array(6)].map((_, i) => (
+            <React.Fragment key={i}>
+              {tickerLines.map((line, j) => (
+                <div key={`tk-${i}-${j}`} className="tk">{line}</div>
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+      <div className="shl" style={{ marginTop: embedded ? '20px' : '32px', marginBottom: embedded ? 0 : '64px' }}>
+        {!embedded && <div className="shead center" style={{ marginBottom: '32px' }}>
+          <div className="eyebrow" style={{ display: 'inline-flex', justifyContent: 'center' }}>
+            <span className="sq"></span> {title}
+          </div>
+        </div>}
+
+        <div className="cta" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
           
           {/* Card Left: Countdown */}
-          <div style={{ 
-            background: 'linear-gradient(145deg, rgba(30, 27, 50, 0.6) 0%, rgba(15, 13, 25, 0.8) 100%)', 
-            border: '1px solid rgba(124, 58, 237, 0.2)',
-            borderRadius: '16px',
-            padding: '30px',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: '#7C3AED', filter: 'blur(60px)', opacity: 0.3 }}></div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 10px #10B981' }}></div>
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#10B981', letterSpacing: '1px' }}>SẮP DIỄN RA</span>
+          <div className="box tg">
+            <div className="eyebrow" style={{ marginBottom: '24px' }}>
+              <span className="d" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ok)', boxShadow: '0 0 10px var(--ok)', animation: 'bhxPulse 1.6s ease-in-out infinite' }}></span>
+              <span style={{ color: 'var(--ok)' }}>THỜI GIAN CÒN LẠI</span>
             </div>
 
             <div style={{ marginBottom: '30px' }}>
-              <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>{dateDisplay}</div>
-              <div style={{ fontSize: '1.125rem', color: '#A78BFA' }}>{timeDisplay}</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--tx)', marginBottom: '8px' }}>{dateDisplay}</div>
+              <div style={{ fontSize: '1.125rem', color: 'var(--ink-2)' }}>{timeDisplay}</div>
             </div>
 
-            {/* Countdown Boxes */}
-            <div style={{ display: 'flex', gap: '15px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
               {[
                 { label: 'Ngày', value: timeLeft.days },
                 { label: 'Giờ', value: timeLeft.hours },
                 { label: 'Phút', value: timeLeft.minutes },
                 { label: 'Giây', value: timeLeft.seconds }
               ].map((item, idx) => (
-                <div key={idx} style={{ flex: 1, textAlign: 'center' }}>
-                  <div style={{ 
-                    background: 'rgba(255, 255, 255, 0.05)', 
-                    border: '1px solid rgba(255, 255, 255, 0.1)', 
-                    borderRadius: '8px', 
-                    padding: '12px 0',
-                    fontSize: '1.75rem',
-                    fontWeight: 800,
-                    color: '#fff',
-                    marginBottom: '8px',
-                    fontVariantNumeric: 'tabular-nums'
-                  }}>
+                <div key={idx} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--bd-2)', borderRadius: '12px', padding: '16px 8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--tx)', lineHeight: 1 }}>
                     {item.value.toString().padStart(2, '0')}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--tx3)', marginTop: '8px', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.1em' }}>
                     {item.label}
                   </div>
                 </div>
@@ -120,50 +121,37 @@ export const CountdownSection: React.FC<CountdownSectionProps> = ({
             </div>
           </div>
 
-          {/* Card Right: Slots Info */}
-          <div style={{ 
-            background: 'linear-gradient(145deg, rgba(30, 27, 50, 0.6) 0%, rgba(15, 13, 25, 0.8) 100%)', 
-            border: '1px solid rgba(124, 58, 237, 0.2)',
-            borderRadius: '16px',
-            padding: '30px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-          }}>
+          {/* Card Right: Slots */}
+          <div className="box ib">
+            <div className="eyebrow" style={{ marginBottom: '24px' }}>
+              <Users size={16} color="var(--ink-2)" /> TÌNH TRẠNG CHỖ NGỒI
+            </div>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-              <Users size={24} color="#A78BFA" />
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 700, margin: 0 }}>Số lượng có hạn</h3>
-            </div>
+            <h3 style={{ fontSize: '24px', marginBottom: '8px' }}>Đã đăng ký <span className="em">{safeSlotsBooked}</span> / {safeSlotsTotal}</h3>
+            <p className="sub" style={{ marginBottom: '32px' }}>
+              Chỉ còn lại <strong style={{ color: 'var(--tx)' }}>{slotsAvailable}</strong> chỗ trống. Phòng sẽ khóa khi đủ số lượng để đảm bảo chất lượng đường truyền.
+            </p>
 
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.875rem' }}>
-                <span style={{ color: '#E5E7EB' }}>Đã đăng ký: <strong>{slotsBooked}</strong></span>
-                <span style={{ color: '#9CA3AF' }}>Tổng: {slotsTotal}</span>
-              </div>
-              <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', background: 'linear-gradient(90deg, #7C3AED, #4F46E5)', width: `${progressPercent}%`, borderRadius: '4px' }}></div>
-              </div>
-              <div style={{ textAlign: 'right', marginTop: '8px', fontSize: '0.875rem', color: '#10B981', fontWeight: 600 }}>
-                Còn lại {slotsAvailable} chỗ
-              </div>
+            <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '999px', height: '14px', overflow: 'hidden', border: '1px solid var(--bd)' }}>
+              <div style={{ 
+                height: '100%', 
+                width: `${progressPercent}%`, 
+                background: 'linear-gradient(90deg, var(--ink), var(--ink-2))',
+                borderRadius: '999px',
+                boxShadow: '0 0 14px var(--glow)',
+                transition: 'width 1s ease-in-out'
+              }}></div>
             </div>
-
-            <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9375rem' }}>
-                <span style={{ color: '#9CA3AF' }}>Nền tảng</span>
-                <span style={{ color: '#fff', fontWeight: 600 }}>{platform}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9375rem' }}>
-                <span style={{ color: '#9CA3AF' }}>Chi phí</span>
-                <span style={{ color: '#10B981', fontWeight: 700, background: 'rgba(16, 185, 129, 0.15)', padding: '2px 8px', borderRadius: '4px' }}>Miễn phí 100%</span>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '0.875rem', color: 'var(--tx3)', fontWeight: 600 }}>
+              <span>Đã lấp đầy</span>
+              <span style={{ color: 'var(--ink-2)' }}>{progressPercent}%</span>
             </div>
-
           </div>
 
         </div>
       </div>
-    </section>
+    </>
   );
+
+  return embedded ? <div className="hero-schedule">{content}</div> : <section className="band">{content}</section>;
 };

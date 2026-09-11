@@ -4,6 +4,33 @@ import { AuthenticatedRequest } from '../middlewares/auth';
 import { logAudit } from '../middlewares/audit';
 import { sendNewLeadNotification, sendDiscordLeadNotification } from '../services/email.service';
 
+type JsonObject = Record<string, unknown>;
+
+/** Store configuration in one canonical JSON-object representation.
+ * This also repairs legacy payloads that were JSON-stringified twice. */
+function normalizeJsonObject(value: unknown): string | null {
+  if (value === null || value === undefined || value === '') return null;
+
+  let parsed = value;
+  for (let attempt = 0; attempt < 2 && typeof parsed === 'string'; attempt += 1) {
+    try {
+      parsed = JSON.parse(parsed);
+    } catch {
+      return null;
+    }
+  }
+
+  return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+    ? JSON.stringify(parsed as JsonObject)
+    : null;
+}
+
+function parseJsonObject(value: string | null): JsonObject | null {
+  if (!value) return null;
+  const normalized = normalizeJsonObject(value);
+  return normalized ? JSON.parse(normalized) as JsonObject : null;
+}
+
 // -------------------------------------------------------------
 // 1. IB Landing Page Builder
 // -------------------------------------------------------------
@@ -58,7 +85,7 @@ export async function createIBLandingPage(req: AuthenticatedRequest, res: Respon
         title,
         slug: cleanSlug,
         seoDescription: seoDescription || null,
-        themeConfig: themeConfig ? JSON.stringify(themeConfig) : null,
+        themeConfig: normalizeJsonObject(themeConfig),
         sectionsJson: JSON.stringify(defaultSections),
         isPublished: true,
       }
@@ -93,7 +120,7 @@ export async function updateIBLandingPage(req: AuthenticatedRequest, res: Respon
       data: {
         title: title !== undefined ? title : page.title,
         seoDescription: seoDescription !== undefined ? seoDescription : page.seoDescription,
-        themeConfig: themeConfig ? JSON.stringify(themeConfig) : page.themeConfig,
+        themeConfig: themeConfig !== undefined ? normalizeJsonObject(themeConfig) : page.themeConfig,
         sectionsJson: sections ? JSON.stringify(sections) : page.sectionsJson,
         isPublished: isPublished !== undefined ? isPublished : page.isPublished,
       }
@@ -138,7 +165,8 @@ export async function getPublicLandingPage(req: Request, res: Response) {
     const page = await prisma.iBLandingPage.findUnique({
       where: { slug },
       include: {
-        ib: { select: { id: true, fullName: true, email: true, phone: true } }
+        ib: { select: { id: true, fullName: true, email: true, phone: true } },
+        _count: { select: { leads: true } }
       }
     });
 
@@ -153,8 +181,9 @@ export async function getPublicLandingPage(req: Request, res: Response) {
         slug: page.slug,
         title: page.title,
         seoDescription: page.seoDescription,
-        themeConfig: page.themeConfig ? JSON.parse(page.themeConfig) : null,
+        themeConfig: parseJsonObject(page.themeConfig),
         sections: JSON.parse(page.sectionsJson),
+        leadCount: page._count.leads,
         ib: page.ib,
       }
     });
@@ -381,4 +410,3 @@ export async function getTotalLeadCount(req: Request, res: Response) {
     return res.status(500).json({ success: false, message: 'Lỗi khi lấy thống kê' });
   }
 }
-

@@ -1,13 +1,18 @@
 import React from 'react';
 import { Star, TrendingUp, Users, BookOpen } from 'lucide-react';
 
+interface MentorStat {
+  label: string;
+  value: string;
+}
+
 interface MentorProfileSectionProps {
   title?: string;
   mentorName?: string;
   mentorTitle?: string;
   mentorDesc?: string;
   imageUrl?: string;
-  stats?: { label: string; value: string; icon: React.ReactNode }[];
+  stats?: MentorStat[];
 }
 
 export const MentorProfileSection: React.FC<MentorProfileSectionProps> = ({
@@ -15,90 +20,78 @@ export const MentorProfileSection: React.FC<MentorProfileSectionProps> = ({
   mentorName = 'Hải Anh',
   mentorTitle = '★ Top KOL Forex Việt Nam',
   mentorDesc = 'Trader & Mentor chuyên Vàng, Forex với hơn 8 năm thực chiến và 5+ năm đào tạo trực tiếp trên thị trường. Theo đuổi phương pháp giao dịch nhất quán và kỷ luật.',
-  imageUrl = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800', // Placeholder
+  imageUrl = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800',
   stats = [
-    { label: 'Kinh nghiệm thực chiến', value: '8+ năm', icon: <TrendingUp size={20} color="#A78BFA" /> },
-    { label: 'Người theo dõi', value: '300K+', icon: <Users size={20} color="#A78BFA" /> },
-    { label: 'Chủ đề', value: '8+', icon: <BookOpen size={20} color="#A78BFA" /> },
+    { label: 'Kinh nghiệm', value: '8+ năm' },
+    { label: 'Theo dõi', value: '300K+' },
+    { label: 'Chủ đề', value: '8+' },
   ]
 }) => {
+  // Use a placeholder if no image is provided
+  const finalImageUrl = imageUrl && imageUrl.trim() !== '' 
+    ? imageUrl 
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(mentorName)}&background=10B981&color=fff&size=512`;
+
+  const getIconForStat = (index: number) => {
+    switch (index % 3) {
+      case 0: return <TrendingUp size={18} color="var(--ink-2)" />;
+      case 1: return <Users size={18} color="var(--ink-2)" />;
+      case 2: return <BookOpen size={18} color="var(--ink-2)" />;
+      default: return <Star size={18} color="var(--ink-2)" />;
+    }
+  };
+
   return (
-    <section style={{ padding: '80px 20px', background: '#0B0A14' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        
-        <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px', color: '#10B981', fontWeight: 700, letterSpacing: '2px', fontSize: '0.875rem' }}>
-            <Star size={18} /> {title}
-          </div>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-            {mentorName} là ai?
-          </h2>
+    <section className="band">
+      <div className="shl">
+        <div className="shead center">
+          <div className="eyebrow"><span className="sq"></span> {title}</div>
+          <h2 className="h2">{mentorName} <span className="em">là ai?</span></h2>
         </div>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '40px',
-          alignItems: 'center',
-          background: 'linear-gradient(145deg, rgba(30, 27, 50, 0.4) 0%, rgba(15, 13, 25, 0.6) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
-          borderRadius: '24px',
-          padding: '40px'
-        }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 400px) 1fr', gap: '32px', alignItems: 'stretch' }}>
           
-          {/* Avatar Image */}
-          <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%', background: '#7C3AED', filter: 'blur(80px)', opacity: 0.3, zIndex: 0 }}></div>
-            <img 
-              src={imageUrl} 
-              alt={mentorName} 
-              style={{ 
-                width: '100%', 
-                maxWidth: '400px', 
-                height: 'auto', 
-                aspectRatio: '1', 
-                objectFit: 'cover', 
-                borderRadius: '20px',
-                border: '2px solid rgba(124, 58, 237, 0.3)',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                position: 'relative',
-                zIndex: 1
-              }} 
-            />
+          {/* Cột trái: Ảnh và Plate */}
+          <div style={{ position: 'relative', borderRadius: '22px', overflow: 'hidden', border: '1px solid var(--bd)', background: '#0A0710', minHeight: '100%' }}>
+            <img src={finalImageUrl} alt={mentorName} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', minHeight: '400px' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,7,16,0.1) 30%, rgba(10,7,16,0.9) 100%)' }}></div>
+            <div style={{ position: 'absolute', top: '14px', left: '14px', zIndex: 2, display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '10.5px', fontWeight: 800, letterSpacing: '0.05em', color: '#fff', background: 'rgba(10,7,16,0.62)', border: '1px solid rgba(255,255,255,0.1)', padding: '5px 12px', borderRadius: '8px', backdropFilter: 'blur(10px)' }}>
+              <span className="d" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--ink)', boxShadow: '0 0 10px var(--glow)', animation: 'bhxPulse 1.6s ease-in-out infinite' }}></span> LIVE MENTOR
+            </div>
+            <div style={{ position: 'absolute', left: '18px', right: '18px', bottom: '15px', zIndex: 2 }}>
+              <div style={{ fontSize: '23px', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.1 }}>{mentorName}</div>
+              <div style={{ fontSize: '12.5px', color: 'var(--ink-2)', fontWeight: 700, marginTop: '3px' }}>{mentorTitle}</div>
+            </div>
           </div>
 
-          {/* Info */}
-          <div>
-            <div style={{ display: 'inline-block', background: 'rgba(124, 58, 237, 0.1)', color: '#A78BFA', padding: '6px 16px', borderRadius: '30px', fontSize: '0.875rem', fontWeight: 700, marginBottom: '16px' }}>
-              TRADER & MENTOR
-            </div>
-            <h3 style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>
-              {mentorName}
-            </h3>
-            <div style={{ fontSize: '1.125rem', color: '#10B981', fontWeight: 600, marginBottom: '24px' }}>
-              {mentorTitle}
-            </div>
+          {/* Cột phải: Thông tin */}
+          <div className="card" style={{ padding: '36px' }}>
+            <div className="eyebrow" style={{ marginBottom: '16px' }}><Star size={14} color="var(--ink-2)" /> TRADER & MENTOR</div>
+            <h3 style={{ fontSize: '1.75rem', marginBottom: '16px' }}>Về <span className="em">{mentorName}</span></h3>
             
-            <p style={{ fontSize: '1.0625rem', color: '#D1D5DB', lineHeight: 1.7, marginBottom: '32px' }}>
-              <strong style={{ color: '#fff' }}>{mentorName}</strong> — {mentorDesc}
+            <p className="sub" style={{ fontSize: '15px', lineHeight: 1.7, marginBottom: '36px', maxWidth: '100%' }}>
+              {mentorDesc}
             </p>
 
-            {/* Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '20px' }}>
-              {stats.map((stat, idx) => (
-                <div key={idx} style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ marginBottom: '8px' }}>{stat.icon}</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{stat.value}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>{stat.label}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
+              {stats && stats.map((stat, idx) => (
+                <div key={idx} className="glass" style={{ padding: '16px', borderRadius: '16px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', display: 'grid', placeItems: 'center', marginBottom: '12px', border: '1px solid var(--bd)' }}>
+                    {getIconForStat(idx)}
+                  </div>
+                  <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--tx)', letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '4px' }}>
+                    {stat.value}
+                  </div>
+                  <div style={{ fontSize: '13px', color: 'var(--tx3)', fontWeight: 600 }}>
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
         </div>
-
       </div>
     </section>
   );
-
 };

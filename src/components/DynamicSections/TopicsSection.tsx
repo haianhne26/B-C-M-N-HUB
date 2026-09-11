@@ -1,5 +1,4 @@
 import React from 'react';
-import { BookOpen } from 'lucide-react';
 
 interface Topic {
   title: string;
@@ -27,46 +26,39 @@ export const TopicsSection: React.FC<TopicsSectionProps> = ({
   ]
 }) => {
   return (
-    <section style={{ padding: '80px 20px', background: '#0B0A14' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+    <section className="band">
+      <div className="shl">
         
-        <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px', color: '#10B981', fontWeight: 700, letterSpacing: '2px', fontSize: '0.875rem' }}>
-            <BookOpen size={18} /> {title}
-          </div>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-            {subtitle}
-          </h2>
+        <div className="shead center">
+          <div className="eyebrow"><span className="sq"></span> {title}</div>
+          <h2 className="h2">{subtitle}</h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
           {topics.map((topic, idx) => (
-            <div key={idx} style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: '16px',
-              padding: '24px',
+            <div key={idx} className="feat glass" style={{ 
+              padding: '28px 24px', 
               transition: 'all 0.3s ease',
               cursor: 'default',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(124, 58, 237, 0.05)';
-              e.currentTarget.style.borderColor = 'rgba(124, 58, 237, 0.3)';
-              e.currentTarget.style.transform = 'translateY(-4px)';
+              e.currentTarget.style.borderColor = 'rgba(255, 140, 40, 0.4)';
+              e.currentTarget.style.transform = 'translateY(-6px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.8)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+              e.currentTarget.style.borderColor = 'var(--bd)';
               e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 20px 50px -24px rgba(0,0,0,0.7)';
             }}
             >
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: 'rgba(124, 58, 237, 0.2)', marginBottom: '12px', lineHeight: 1 }}>
+              <div style={{ fontSize: '2.5rem', fontWeight: 900, color: 'rgba(255, 255, 255, 0.05)', marginBottom: '12px', lineHeight: 1, textShadow: '0 0 20px rgba(255,140,40,0.2)' }}>
                 {(idx + 1).toString().padStart(2, '0')}
               </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '12px' }}>
+              <h4 style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--tx)', marginBottom: '12px' }}>
                 {topic.title}
-              </h3>
-              <p style={{ fontSize: '0.9375rem', color: '#9CA3AF', lineHeight: 1.6, margin: 0 }}>
+              </h4>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--tx2)', lineHeight: 1.6, margin: 0 }}>
                 {topic.description}
               </p>
             </div>
