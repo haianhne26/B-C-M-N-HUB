@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Award, TrendingUp, Users } from 'lucide-react';
+import { Star, TrendingUp, Users, BookOpen } from 'lucide-react';
 
 interface MentorProfileSectionProps {
   title?: string;
@@ -100,7 +100,5 @@ export const MentorProfileSection: React.FC<MentorProfileSectionProps> = ({
       </div>
     </section>
   );
-};
 
-// Cần import BookOpen nếu dùng trong stats mặc định
-import { BookOpen } from 'lucide-react';
+};
