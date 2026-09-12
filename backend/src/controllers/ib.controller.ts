@@ -410,3 +410,87 @@ export async function getTotalLeadCount(req: Request, res: Response) {
     return res.status(500).json({ success: false, message: 'Lỗi khi lấy thống kê' });
   }
 }
+
+// -------------------------------------------------------------
+// 4. IB Overview Metrics
+// -------------------------------------------------------------
+export async function incrementClick(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    await prisma.iBLandingPage.update({
+      where: { id },
+      data: { clicks: { increment: 1 } }
+    });
+    return res.json({ success: true });
+  } catch (err: any) {
+    // If the landing page doesn't exist, we just ignore it
+    return res.status(200).json({ success: false });
+  }
+}
+
+export async function getOverview(req: AuthenticatedRequest, res: Response) {
+  try {
+    const ibId = req.user?.id;
+    if (!ibId) return res.status(401).json({ success: false, message: 'Chưa đăng nhập' });
+
+    // 1. Clicks: Sum of clicks from all active landing pages of this IB
+    const landingPages = await prisma.iBLandingPage.findMany({
+      where: { ibId },
+      select: { clicks: true }
+    });
+    const totalClicks = landingPages.reduce((sum, page) => sum + page.clicks, 0);
+
+    // 2. New Leads: Count of Leads associated with an active landing page for this IB
+    // Only count leads where landingPageId is NOT NULL
+    const newLeadsCount = await prisma.lead.count({
+      where: { 
+        ibId,
+        landingPageId: { not: null }
+      }
+    });
+
+    // 3. Conversions: Count of Leads with "Đã nạp" tag
+    const conversionsCount = await prisma.lead.count({
+      where: {
+        ibId,
+        leadTags: {
+          some: {
+            tag: { name: { contains: 'Đã nạp', mode: 'insensitive' } }
+          }
+        }
+      }
+    });
+
+    // Get today's action items (New Leads not contacted)
+    const actionLeads = await prisma.lead.findMany({
+      where: {
+        ibId,
+        status: 'NEW'
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    });
+
+    const pendingCount = await prisma.lead.count({
+      where: {
+        ibId,
+        status: 'NEW'
+      }
+    });
+
+    return res.json({
+      success: true,
+      data: {
+        clicks: totalClicks,
+        newLeads: newLeadsCount,
+        conversions: conversionsCount,
+        openAccounts: 0, // Placeholder
+        actionLeads,
+        pendingCount
+      }
+    });
+  } catch (err: any) {
+    console.error('getOverview Error:', err);
+    return res.status(500).json({ success: false, message: 'Lỗi khi tải tổng quan' });
+  }
+}

@@ -199,6 +199,10 @@ export const api = {
   },
 
   // 7. IB System (CRM & Landing Page Builder)
+  async getIBOverview() {
+    return request('/ib/overview');
+  },
+
   async getIBLeads() {
     return request('/ib/leads');
   },

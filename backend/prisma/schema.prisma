@@ -290,6 +290,7 @@ model IBLandingPage {
   themeConfig    String?  // JSON for colors/fonts
   sectionsJson   String   // JSON array of section objects
   isPublished    Boolean  @default(true)
+  clicks         Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -313,7 +314,7 @@ model Lead {
   lastContactAt DateTime?
 
   ib          User           @relation("IBLeads", fields: [ibId], references: [id], onDelete: Cascade)
-  landingPage IBLandingPage? @relation(fields: [landingPageId], references: [id])
+  landingPage IBLandingPage? @relation(fields: [landingPageId], references: [id], onDelete: SetNull)
   leadTags    LeadTag[]
 
   @@index([ibId])

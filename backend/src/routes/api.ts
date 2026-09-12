@@ -16,7 +16,9 @@ import {
   listIBLeads,
   updateLeadStatus,
   updateLeadTags,
-  getTotalLeadCount
+  getTotalLeadCount,
+  incrementClick,
+  getOverview
 } from '../controllers/ib.controller';
 import { getLatestVersion, publishNewVersion } from '../controllers/update.controller';
 import { getAdminOverview, getAuditLogs } from '../controllers/admin.controller';
@@ -94,6 +96,8 @@ router.get('/ib/leads', authenticateToken, requirePermission(PERMISSIONS.CRM_VIE
 router.patch('/ib/leads/:id/status', authenticateToken, requirePermission(PERMISSIONS.CRM_EDIT), updateLeadStatus);
 router.patch('/ib/leads/:id/tags', authenticateToken, requirePermission(PERMISSIONS.CRM_EDIT), updateLeadTags);
 router.get('/stats/total-leads', getTotalLeadCount); // Public stats endpoint
+router.post('/ib/landing-pages/:id/click', incrementClick); // Public click track
+router.get('/ib/overview', authenticateToken, requirePermission(PERMISSIONS.CRM_VIEW), getOverview);
 
 // ==========================================
 // 9. Auto Update

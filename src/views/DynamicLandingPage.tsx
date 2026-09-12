@@ -48,6 +48,12 @@ export const DynamicLandingPage: React.FC = () => {
         const result = await res.json();
         if (result.success && result.data) {
           setData(result.data);
+          
+          // Increment click count (fire-and-forget)
+          if (result.data.id) {
+            fetch(`${apiUrl}/ib/landing-pages/${result.data.id}/click`, { method: 'POST' }).catch(() => {});
+          }
+
           if (result.data.title) {
             document.title = result.data.title;
           }
