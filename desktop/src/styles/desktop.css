@@ -906,7 +906,8 @@ body.desktop-body {
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--border-strong);
+  background: var(--bg-card-hover);
+  border: 1px solid var(--text-secondary);
   border-radius: 4px;
   outline: none;
   cursor: pointer;
