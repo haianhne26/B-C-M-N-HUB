@@ -1,7 +1,7 @@
 import React from 'react';
 import { siteConfig } from '../config/site';
 import { Download, ChevronRight, CheckCircle2, Sparkles } from 'lucide-react';
-import { TradingMockup } from './TradingMockup';
+import { HeroScene } from './ThreeCanvas/HeroScene';
 
 export const Hero: React.FC = () => {
   return (
@@ -42,9 +42,9 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: High Fidelity UI Mockup */}
-          <div className="hero-mockup-col">
-            <TradingMockup />
+          {/* Right Column: High Fidelity 3D Scene */}
+          <div className="hero-mockup-col" style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
+            <HeroScene />
           </div>
         </div>
       </div>

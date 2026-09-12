@@ -21,11 +21,14 @@
   --tx2: #C9C1D2;
   --tx3: #8A8198;
   --ok: #4ADE9A;
+  --bg: #0A0710;
   --shell: 1200px;
   --r: 14px;
   --r-lg: 24px;
   
   position: relative;
+  isolation: isolate;
+  background-color: var(--bg);
   font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
   color: var(--tx2);
   line-height: 1.6;
@@ -41,7 +44,7 @@
 
 /* Aurora Background Animation */
 .bhx-aura {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: #0A0710;
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; background: transparent;
 }
 .bhx-aura::before, .bhx-aura::after {
   content: ""; position: absolute; inset: -25%; will-change: transform;
@@ -67,6 +70,22 @@
 @keyframes bhxPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 @keyframes bhxMarq { to { transform: translateX(-50%); } }
 @keyframes bhxFloaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+/* Ticker */
+.bhx .ticker {
+  display: flex; align-items: center; border-bottom: 1px solid var(--bd); border-top: 1px solid var(--bd);
+  background: var(--glass); overflow: hidden; white-space: nowrap; padding: 12px 24px; gap: 24px; width: 100%;
+}
+.bhx .ticker .live {
+  display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff; flex-shrink: 0; position: relative; z-index: 2; font-size: 13px;
+}
+.bhx .ticker .live .d { width: 8px; height: 8px; background: var(--ok); border-radius: 50%; box-shadow: 0 0 10px var(--ok); animation: bhxPulse 1.6s infinite; }
+.bhx .ticker .track {
+  display: flex; align-items: center; gap: 24px; animation: bhxMarq 40s linear infinite; white-space: nowrap; min-width: fit-content;
+}
+.bhx .ticker .tk {
+  font-weight: 600; color: var(--tx2); text-transform: uppercase; letter-spacing: 0.1em; font-size: 13px;
+}
 
 /* Typography */
 .bhx h1, .bhx h2, .bhx h3, .bhx h4 { color: var(--tx); font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; margin: 0; }
