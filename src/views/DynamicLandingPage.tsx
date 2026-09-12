@@ -72,6 +72,31 @@ export const DynamicLandingPage: React.FC = () => {
 
   }, [slug]);
 
+  // Hooks must run in exactly the same order while the page is loading and
+  // after its data arrives. Keep this before every conditional return.
+  const themeStyles = useMemo(() => {
+    const primaryColor = parseThemeConfig(data?.themeConfig)?.primaryColor;
+    const rgb = primaryColor ? hexToRgb(primaryColor) : null;
+    if (!rgb || !primaryColor) return {};
+
+    const [lightR, lightG, lightB] = mix(rgb, 255, 0.28);
+    const [deepR, deepG, deepB] = mix(rgb, 0, 0.26);
+    const [softR, softG, softB] = mix(rgb, 255, 0.12);
+    return {
+      '--ink': primaryColor,
+      '--ink-2': `rgb(${lightR}, ${lightG}, ${lightB})`,
+      '--ink-deep': `rgb(${deepR}, ${deepG}, ${deepB})`,
+      '--glow': `rgba(${rgb.join(', ')}, 0.45)`,
+      '--aura-strong': `rgba(${rgb.join(', ')}, 0.50)`,
+      '--aura-medium': `rgba(${softR}, ${softG}, ${softB}, 0.42)`,
+      '--aura-soft': `rgba(${rgb.join(', ')}, 0.16)`,
+    } as React.CSSProperties;
+  }, [data?.themeConfig]);
+
+  const sections = data?.sections || [];
+  const countdownSection = sections.find((section: any) => section.type === 'Countdown');
+  const leadCount = Number.isFinite(Number(data?.leadCount)) ? Math.max(0, Number(data.leadCount)) : 0;
+
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#0B0A14', color: '#fff' }}>
@@ -91,29 +116,6 @@ export const DynamicLandingPage: React.FC = () => {
   const scrollToForm = () => {
     document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const themeStyles = useMemo(() => {
-    const primaryColor = parseThemeConfig(data.themeConfig)?.primaryColor;
-    const rgb = primaryColor ? hexToRgb(primaryColor) : null;
-    if (!rgb || !primaryColor) return {};
-
-    const [lightR, lightG, lightB] = mix(rgb, 255, 0.28);
-    const [deepR, deepG, deepB] = mix(rgb, 0, 0.26);
-    const [softR, softG, softB] = mix(rgb, 255, 0.12);
-    return {
-      '--ink': primaryColor,
-      '--ink-2': `rgb(${lightR}, ${lightG}, ${lightB})`,
-      '--ink-deep': `rgb(${deepR}, ${deepG}, ${deepB})`,
-      '--glow': `rgba(${rgb.join(', ')}, 0.45)`,
-      '--aura-strong': `rgba(${rgb.join(', ')}, 0.50)`,
-      '--aura-medium': `rgba(${softR}, ${softG}, ${softB}, 0.42)`,
-      '--aura-soft': `rgba(${rgb.join(', ')}, 0.16)`,
-    } as React.CSSProperties;
-  }, [data.themeConfig]);
-
-  const sections = data.sections || [];
-  const countdownSection = sections.find((section: any) => section.type === 'Countdown');
-  const leadCount = Number.isFinite(Number(data.leadCount)) ? Math.max(0, Number(data.leadCount)) : 0;
 
   return (
     <div className="bhx bhx-hn" style={themeStyles}>
