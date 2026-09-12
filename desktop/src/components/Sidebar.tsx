@@ -46,7 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside className={`desktop-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
         {/* Logo */}
         <div className="sidebar-logo">
           <img 
