@@ -17,7 +17,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  Settings
+  Settings,
+  Video,
+  HelpCircle
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -102,6 +104,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             <GraduationCap size={18} />
             <span>Khóa học</span>
+          </div>
+
+          <div
+            className={`sidebar-item ${currentView === 'booking-zoom' ? 'active' : ''}`}
+            onClick={() => onSelectView('booking-zoom')}
+          >
+            <Video size={18} />
+            <span>Booking Zoom</span>
+          </div>
+
+          <div
+            className={`sidebar-item ${currentView === 'support-ticket' ? 'active' : ''}`}
+            onClick={() => onSelectView('support-ticket')}
+          >
+            <HelpCircle size={18} />
+            <span>Gửi Ticket Hỗ trợ</span>
           </div>
 
           {/* IB Menu */}

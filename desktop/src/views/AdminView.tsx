@@ -13,6 +13,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
   const [roleFilter, setRoleFilter] = useState<string>('ALL');
   const [keys, setKeys] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Key Generation State
@@ -69,6 +71,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
       } else if (activeTab === 'logs') {
         const res = await api.getAuditLogs();
         setLogs(res.data || []);
+      } else if (activeTab === 'support') {
+        const resTickets = await api.getAllTickets();
+        const resBookings = await api.getAllBookings();
+        setTickets(resTickets.data || []);
+        setBookings(resBookings.data || []);
       }
     } catch (err) {
       console.error(err);
@@ -245,6 +252,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
             onClick={() => setActiveTab('logs')}
           >
             Audit Logs
+          </button>
+          <button
+            className={`btn-desk ${activeTab === 'support' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
+            onClick={() => setActiveTab('support')}
+          >
+            Hỗ trợ & Booking
           </button>
         </div>
       </div>
@@ -724,6 +737,136 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {/* Tab: Support & Bookings */}
+      {activeTab === 'support' && (
+        <div style={{ display: 'grid', gap: '24px' }}>
+          {/* Tickets */}
+          <div className="app-card">
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Quản lý Ticket Hỗ Trợ</h3>
+            <div className="app-table-wrapper">
+              <table className="app-table">
+                <thead>
+                  <tr>
+                    <th>Thời gian</th>
+                    <th>Người gửi</th>
+                    <th>Tiêu đề / Loại</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tickets.map(t => (
+                    <tr key={t.id}>
+                      <td>{new Date(t.createdAt).toLocaleString('vi-VN')}</td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{t.user?.fullName}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.user?.email}</div>
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{t.title}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#A78BFA' }}>{t.category}</div>
+                      </td>
+                      <td>
+                        <span style={{
+                          padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700,
+                          background: t.status === 'OPEN' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+                          color: t.status === 'OPEN' ? '#F59E0B' : '#10B981'
+                        }}>{t.status}</span>
+                      </td>
+                      <td>
+                        <button
+                          className="btn-desk btn-desk-secondary btn-desk-sm"
+                          onClick={() => {
+                            const reply = prompt('Nhập nội dung phản hồi cho user (Sẽ chuyển trạng thái sang RESOLVED):', t.adminReply || '');
+                            if (reply !== null) {
+                              api.replyTicket(t.id, reply, 'RESOLVED').then(() => {
+                                alert('Đã phản hồi thành công');
+                                loadTabData();
+                              });
+                            }
+                          }}
+                        >
+                          Phản hồi
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Bookings */}
+          <div className="app-card">
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Quản lý Booking Zoom</h3>
+            <div className="app-table-wrapper">
+              <table className="app-table">
+                <thead>
+                  <tr>
+                    <th>Lịch hẹn</th>
+                    <th>Người gửi</th>
+                    <th>Chủ đề</th>
+                    <th>Trạng thái</th>
+                    <th>Link Zoom</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bookings.map(b => (
+                    <tr key={b.id}>
+                      <td style={{ fontWeight: 600 }}>{new Date(b.bookingDate).toLocaleString('vi-VN')}</td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{b.user?.fullName}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{b.user?.email}</div>
+                      </td>
+                      <td>{b.topic}</td>
+                      <td>
+                        <select
+                          className="form-input"
+                          style={{ padding: '4px 8px', fontSize: '0.75rem', height: 'auto', backgroundColor: '#1E1B2E', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
+                          value={b.status}
+                          onChange={(e) => {
+                            api.updateBookingStatus(b.id, e.target.value, b.zoomLink).then(() => loadTabData());
+                          }}
+                        >
+                          <option value="PENDING">PENDING</option>
+                          <option value="CONFIRMED">CONFIRMED</option>
+                          <option value="COMPLETED">COMPLETED</option>
+                          <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          className="form-input"
+                          placeholder="Link Zoom"
+                          style={{ padding: '4px 8px', fontSize: '0.75rem', height: 'auto' }}
+                          defaultValue={b.zoomLink || ''}
+                          onBlur={(e) => {
+                            if (e.target.value !== (b.zoomLink || '')) {
+                              api.updateBookingStatus(b.id, b.status, e.target.value).then(() => loadTabData());
+                            }
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <button
+                          className="btn-desk btn-desk-secondary btn-desk-sm"
+                          onClick={() => {
+                            alert('Ghi chú của KH: ' + (b.notes || 'Không có'));
+                          }}
+                        >
+                          Xem Ghi Chú
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
     </div>

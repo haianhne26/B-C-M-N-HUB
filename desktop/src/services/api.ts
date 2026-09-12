@@ -295,5 +295,50 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(payload)
     });
+  },
+
+  // 10. Support & Training
+  async createZoomBooking(payload: { topic: string; bookingDate: string; notes?: string }) {
+    return request('/support/zoom', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async getUserBookings() {
+    return request('/support/zoom');
+  },
+
+  async getAllBookings() {
+    return request('/admin/support/zoom');
+  },
+
+  async updateBookingStatus(id: string, status: string, zoomLink?: string) {
+    return request(`/admin/support/zoom/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status, zoomLink })
+    });
+  },
+
+  async createSupportTicket(payload: { title: string; category: string; description: string }) {
+    return request('/support/tickets', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async getUserTickets() {
+    return request('/support/tickets');
+  },
+
+  async getAllTickets() {
+    return request('/admin/support/tickets');
+  },
+
+  async replyTicket(id: string, adminReply: string, status?: string) {
+    return request(`/admin/support/tickets/${id}/reply`, {
+      method: 'PUT',
+      body: JSON.stringify({ adminReply, status })
+    });
   }
 };

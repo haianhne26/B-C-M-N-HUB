@@ -22,6 +22,16 @@ import {
 } from '../controllers/ib.controller';
 import { getLatestVersion, publishNewVersion } from '../controllers/update.controller';
 import { getAdminOverview, getAuditLogs } from '../controllers/admin.controller';
+import {
+  createZoomBooking,
+  getUserBookings,
+  getAllBookings,
+  updateBookingStatus,
+  createTicket,
+  getUserTickets,
+  getAllTickets,
+  replyTicket
+} from '../controllers/support.controller';
 import { authenticateToken, requirePermission, requireServiceLicense } from '../middlewares/auth';
 import { PERMISSIONS } from '../shared';
 
@@ -110,5 +120,20 @@ router.post('/updates/publish', authenticateToken, requirePermission(PERMISSIONS
 // ==========================================
 router.get('/admin/overview', authenticateToken, requirePermission(PERMISSIONS.SYSTEM_SETTINGS), getAdminOverview);
 router.get('/admin/audit-logs', authenticateToken, requirePermission(PERMISSIONS.SYSTEM_LOGS), getAuditLogs);
+
+// ==========================================
+// 11. Support & Training (Zoom & Tickets)
+// ==========================================
+// Zoom
+router.post('/support/zoom', authenticateToken, createZoomBooking);
+router.get('/support/zoom', authenticateToken, getUserBookings);
+router.get('/admin/support/zoom', authenticateToken, getAllBookings);
+router.put('/admin/support/zoom/:id/status', authenticateToken, updateBookingStatus);
+
+// Tickets
+router.post('/support/tickets', authenticateToken, createTicket);
+router.get('/support/tickets', authenticateToken, getUserTickets);
+router.get('/admin/support/tickets', authenticateToken, getAllTickets);
+router.put('/admin/support/tickets/:id/reply', authenticateToken, replyTicket);
 
 export default router;

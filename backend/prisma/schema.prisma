@@ -37,6 +37,8 @@ model User {
   ibLandingPages   IBLandingPage[]
   ibTags           Tag[]
   notifications    Notification[]
+  zoomBookings     ZoomBooking[]
+  supportTickets   SupportTicket[]
 
   @@index([email])
   @@index([role])
@@ -446,4 +448,41 @@ model SystemSetting {
   updatedAt   DateTime @updatedAt
 
   @@index([key])
+}
+
+// -------------------------------------------------------------
+// 11. Support & Training (Zoom & Tickets)
+// -------------------------------------------------------------
+model ZoomBooking {
+  id          String   @id @default(uuid())
+  userId      String
+  topic       String
+  bookingDate DateTime
+  status      String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  zoomLink    String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SupportTicket {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  category    String   // TECHNICAL, BILLING, GENERAL, OTHER
+  description String
+  status      String   @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  adminReply  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
 }
