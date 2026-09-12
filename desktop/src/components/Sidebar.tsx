@@ -194,16 +194,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         )}
 
-        <div
-          className="sidebar-item"
-          style={{ color: 'var(--bearish)', marginTop: '8px', cursor: 'pointer' }}
-          onClick={onLogout}
-          title="Đăng xuất"
-        >
-          <LogOut size={18} />
-          <span>Đăng xuất</span>
-        </div>
-
         {/* Toggle Collapse Button */}
         <div 
           className="sidebar-item" 

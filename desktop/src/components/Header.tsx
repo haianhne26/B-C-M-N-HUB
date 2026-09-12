@@ -1,5 +1,5 @@
-import React from 'react';
-import { Activity, Key, RefreshCw, UserCheck } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Activity, Key, RefreshCw, UserCheck, Sun, Moon, Monitor, LogOut, User as UserIcon, Globe } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
@@ -10,6 +10,10 @@ interface HeaderProps {
   userRole: 'OWNER' | 'IB' | 'USER';
   userName: string;
   onOpenKeyModal: () => void;
+  onNavigate: (view: string) => void;
+  onLogout: () => void;
+  theme: string;
+  setTheme: (theme: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -20,8 +24,34 @@ export const Header: React.FC<HeaderProps> = ({
   activeKey,
   userRole,
   userName,
-  onOpenKeyModal
+  onOpenKeyModal,
+  onNavigate,
+  onLogout,
+  theme,
+  setTheme
 }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getInitials = (name: string) => {
+    if (!name) return 'BM';
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
   return (
     <header className="desktop-header">
       {/* Left: View Title & MT5 Connection Badge */}
@@ -65,8 +95,66 @@ export const Header: React.FC<HeaderProps> = ({
           {userRole}
         </div>
 
-        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>
-          {userName}
+        <div style={{ position: 'relative' }} ref={dropdownRef}>
+          <div 
+            className="header-avatar"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            {getInitials(userName)}
+          </div>
+
+          {dropdownOpen && (
+            <div className="profile-dropdown">
+              <div 
+                className="dropdown-item"
+                onClick={() => { onNavigate('profile'); setDropdownOpen(false); }}
+              >
+                <UserIcon size={16} />
+                <span>Hồ sơ</span>
+              </div>
+              <div className="dropdown-item">
+                <Globe size={16} />
+                <span>Switch to English</span>
+              </div>
+              
+              <div className="dropdown-divider"></div>
+              
+              <div className="theme-toggle-group">
+                <button 
+                  className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
+                  onClick={() => setTheme('light')}
+                  title="Sáng"
+                >
+                  <Sun size={16} />
+                </button>
+                <button 
+                  className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
+                  onClick={() => setTheme('dark')}
+                  title="Tối"
+                >
+                  <Moon size={16} />
+                </button>
+                <button 
+                  className={`theme-btn ${theme === 'system' ? 'active' : ''}`}
+                  onClick={() => setTheme('system')}
+                  title="Hệ thống"
+                >
+                  <Monitor size={16} />
+                </button>
+              </div>
+
+              <div className="dropdown-divider"></div>
+
+              <div 
+                className="dropdown-item" 
+                style={{ color: 'var(--bearish)' }}
+                onClick={() => { onLogout(); setDropdownOpen(false); }}
+              >
+                <LogOut size={16} />
+                <span>Đăng xuất</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

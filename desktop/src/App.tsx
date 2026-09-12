@@ -16,6 +16,7 @@ import { CalendarView } from './views/CalendarView';
 import { LandingBuilderView } from './views/LandingBuilderView';
 import { CRMView } from './views/CRMView';
 import { AdminView } from './views/AdminView';
+import { ProfileView } from './views/ProfileView';
 
 export const App: React.FC = () => {
   const [user, setUser] = useState<any | null>(getCachedUser());
@@ -23,6 +24,12 @@ export const App: React.FC = () => {
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [updateData, setUpdateData] = useState<any | null>(null);
   const [mt5Data, setMt5Data] = useState<any | null>(null);
+  const [theme, setTheme] = useState(localStorage.getItem('bmh_theme') || 'dark');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('bmh_theme', theme);
+  }, [theme]);
 
   // 1. Check current logged-in user on launch
   useEffect(() => {
@@ -75,6 +82,7 @@ export const App: React.FC = () => {
       case 'admin-keys': return 'Quản lý License KEY';
       case 'admin-updates': return 'Phát hành bản cập nhật';
       case 'admin-logs': return 'Audit Logs';
+      case 'profile': return 'Hồ sơ cá nhân';
       default: return 'Bạc Môn HUB';
     }
   };
@@ -109,6 +117,10 @@ export const App: React.FC = () => {
               userRole={user.role}
               userName={user.fullName}
               onOpenKeyModal={() => setShowKeyModal(true)}
+              onNavigate={(v) => setCurrentView(v)}
+              onLogout={handleLogout}
+              theme={theme}
+              setTheme={setTheme}
             />
 
             <main className="desktop-content">
@@ -127,6 +139,7 @@ export const App: React.FC = () => {
               {currentView === 'calendar' && <CalendarView />}
               {currentView === 'landing-builder' && <LandingBuilderView />}
               {currentView === 'crm' && <CRMView />}
+              {currentView === 'profile' && <ProfileView user={user} />}
 
               {/* Admin Views */}
               {currentView.startsWith('admin-') && (

@@ -37,6 +37,27 @@
   --radius-full: 9999px;
 }
 
+[data-theme='light'] {
+  --bg-app: #F3F4F6;
+  --bg-sidebar: #FFFFFF;
+  --bg-header: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F9FAFB;
+  --bg-input: #FFFFFF;
+  
+  --primary: #F59E0B;
+  --primary-hover: #D97706;
+  --primary-light: rgba(245, 158, 11, 0.15);
+  --primary-glow: transparent;
+  
+  --border-subtle: #E5E7EB;
+  --border-light: #D1D5DB;
+
+  --text-main: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -271,6 +292,101 @@ body.desktop-body {
   color: #C4B5FD;
   border: 1px solid rgba(124, 58, 237, 0.3);
   cursor: pointer;
+}
+
+/* Avatar & Dropdown */
+.header-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--text-main);
+  color: var(--bg-app);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.header-avatar:hover {
+  border-color: var(--primary);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 24px;
+  width: 240px;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme='light'] .profile-dropdown {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.dropdown-item:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-main);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 8px 0;
+}
+
+.theme-toggle-group {
+  display: flex;
+  padding: 8px 16px;
+  gap: 4px;
+}
+
+.theme-btn {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-btn:hover {
+  color: var(--text-main);
+  background: var(--bg-card-hover);
+}
+
+.theme-btn.active {
+  background: var(--bg-card);
+  color: var(--primary);
+  border-color: var(--border-subtle);
 }
 
 /* Content Area */
