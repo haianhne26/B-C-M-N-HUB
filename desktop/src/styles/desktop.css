@@ -899,14 +899,14 @@ body.desktop-body {
   gap: 12px;
   cursor: pointer;
   font-size: 0.9375rem;
-  color: #374151;
+  color: var(--text-main);
 }
 
 .crm-tag-checkbox {
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #D1D5DB;
+  border: 2px solid var(--border-strong);
   border-radius: 4px;
   outline: none;
   cursor: pointer;
@@ -952,8 +952,8 @@ body.desktop-body {
 
 .crm-btn-outline {
   background: transparent;
-  color: #374151;
-  border: 1px solid #D1D5DB;
+  color: var(--text-main);
+  border: 1px solid var(--border-strong);
   padding: 10px 24px;
   border-radius: var(--radius-md);
   font-weight: 600;
@@ -962,5 +962,5 @@ body.desktop-body {
 }
 
 .crm-btn-outline:hover {
-  background: #F3F4F6;
+  background: var(--bg-card-hover);
 }
