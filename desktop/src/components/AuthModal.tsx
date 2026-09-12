@@ -52,11 +52,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess }) => {
     <div className="modal-overlay">
       <div className="modal-card">
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <div className="sidebar-logo-icon" style={{ width: 48, height: 48, margin: '0 auto 12px auto' }}>
-            <Zap size={24} color="#FFFFFF" />
-          </div>
-          <h3 className="modal-title">BẠC MÔN HUB</h3>
-          <p className="modal-desc">
+          <img 
+            src="/logo.jpg" 
+            alt="Bạc Môn Đạo" 
+            style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'contain', border: '1px solid var(--border-subtle)', margin: '0 auto 16px auto', display: 'block' }} 
+          />
+          <h3 className="modal-title" style={{ color: 'var(--text-main)', fontSize: '1.5rem', fontWeight: 800 }}>BẠC MÔN ĐẠO</h3>
+          <p className="modal-desc" style={{ color: 'var(--text-secondary)' }}>
             {isRegister ? 'Đăng ký tài khoản trader mới' : 'Đăng nhập vào hệ thống Desktop Platform'}
           </p>
         </div>
