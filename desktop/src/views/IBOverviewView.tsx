@@ -7,7 +7,7 @@ interface IBOverviewViewProps {
 
 export const IBOverviewView: React.FC<IBOverviewViewProps> = ({ user }) => {
   return (
-    <div style={{ maxWidth: '800px' }}>
+    <div>
       <div style={{ marginBottom: '24px' }}>
         <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '8px' }}>Tổng quan đối tác</h2>
         <div style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)' }}>
@@ -62,8 +62,8 @@ export const IBOverviewView: React.FC<IBOverviewViewProps> = ({ user }) => {
           <button className="btn-desk btn-desk-secondary" style={{ borderRadius: '20px', padding: '6px 16px', fontSize: '0.8125rem', background: 'transparent' }}>
             Đến hạn hôm nay <span style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 8px', borderRadius: '12px', marginLeft: '6px', color: 'var(--text-muted)' }}>0</span>
           </button>
-          <button className="btn-desk" style={{ borderRadius: '20px', padding: '6px 16px', fontSize: '0.8125rem', background: 'var(--text-main)', color: 'var(--bg-base)', fontWeight: 600 }}>
-            Lead mới chưa liên hệ <span style={{ background: 'rgba(0,0,0,0.1)', padding: '2px 8px', borderRadius: '12px', marginLeft: '6px' }}>3</span>
+          <button className="btn-desk" style={{ borderRadius: '20px', padding: '6px 16px', fontSize: '0.8125rem', background: 'var(--text-main)', color: 'var(--bg-app)', fontWeight: 600 }}>
+            Lead mới chưa liên hệ <span style={{ background: 'var(--bg-card)', padding: '2px 8px', borderRadius: '12px', marginLeft: '6px', color: 'var(--text-main)' }}>3</span>
           </button>
         </div>
 
