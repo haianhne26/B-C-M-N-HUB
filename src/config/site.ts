@@ -88,7 +88,7 @@ export const siteConfig: SiteConfig = {
   description: "Một nền tảng hỗ trợ trader quản lý giao dịch, theo dõi thị trường và sử dụng các công cụ cần thiết trong một giao diện trực quan.",
   
   // Link tải phần mềm chính (thay đổi link file cài đặt tại đây)
-  downloadUrl: "/downloads/Bac-Mon-Hub-Alpha-Setup-1.0.4.exe",
+  downloadUrl: "./downloads/Bac-Mon-Hub-Alpha-Setup-1.0.4.exe",
   version: "1.0.4",
   releaseDate: "2026",
 
@@ -203,7 +203,7 @@ export const siteConfig: SiteConfig = {
         icon: "windows",
         badge: "Khuyên dùng (v1.0.4)",
         description: "Hỗ trợ Windows 10, 11 (64-bit)",
-        url: "/downloads/Bac-Mon-Hub-Alpha-Setup-1.0.4.exe", // Thay link file .exe hoặc .zip tại đây
+        url: "./downloads/Bac-Mon-Hub-Alpha-Setup-1.0.4.exe", // Thay link file .exe hoặc .zip tại đây
         available: true
       },
       {
