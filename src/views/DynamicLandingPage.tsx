@@ -129,7 +129,7 @@ export const DynamicLandingPage: React.FC = () => {
         position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50, 
         padding: '20px', display: 'flex', justifyContent: 'center' 
       }}>
-        <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bạc Môn Đạo" style={{ height: '60px', objectFit: 'contain' }} />
+        <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="Bạc Môn Đạo" style={{ height: '60px', width: '60px', objectFit: 'contain', borderRadius: '50%' }} />
       </header>
 
       {/* Dynamic Sections Renderer */}
