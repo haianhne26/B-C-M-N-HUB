@@ -1,6 +1,6 @@
 {
   "appId": "com.bacmonhub.app",
-  "productName": "Bac Mon Hub",
+  "productName": "Bạc Môn Hub Alpha",
   "directories": {
     "output": "release",
     "buildResources": "build"
@@ -14,7 +14,7 @@
   },
   "win": {
     "target": "nsis",
-    "icon": "public/favicon.svg"
+    "icon": "public/icon.png"
   },
   "nsis": {
     "oneClick": false,
