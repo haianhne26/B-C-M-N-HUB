@@ -831,10 +831,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
                             api.updateBookingStatus(b.id, e.target.value, b.zoomLink).then(() => loadTabData());
                           }}
                         >
-                          <option value="PENDING">PENDING</option>
-                          <option value="CONFIRMED">CONFIRMED</option>
-                          <option value="COMPLETED">COMPLETED</option>
-                          <option value="CANCELLED">CANCELLED</option>
+                          <option value="PENDING">Chờ xác nhận</option>
+                          <option value="CONFIRMED">Đã xác nhận</option>
+                          <option value="COMPLETED">Hoàn thành</option>
+                          <option value="CANCELLED">Đã hủy</option>
                         </select>
                       </td>
                       <td>
