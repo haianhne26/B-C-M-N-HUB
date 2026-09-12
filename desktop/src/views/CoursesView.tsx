@@ -43,16 +43,6 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
             Nâng cao kiến thức và kỷ luật phân tích kỹ thuật từ cơ bản đến nâng cao
           </div>
         </div>
-
-        {canAccessPremium ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', borderRadius: 'var(--radius-full)', fontSize: '0.8125rem', fontWeight: 600 }}>
-            <CheckCircle size={15} /> Đã mở khóa nội dung Premium
-          </div>
-        ) : (
-          <button className="btn-desk btn-desk-primary" onClick={onOpenKeyModal} style={{ fontSize: '0.8125rem' }}>
-            <Lock size={14} /> Mở khóa Premium (Nhập KEY)
-          </button>
-        )}
       </div>
 
       {/* Courses Grid */}
@@ -71,29 +61,11 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
             onClick={() => handleOpenCourse(course.slug)}
           >
             <div>
-              {/* Category & Badge */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#A78BFA' }}>{course.category}</span>
-                {course.isPremium ? (
-                  <span style={{
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.6875rem',
-                    fontWeight: 700,
-                    background: course.isLocked ? 'rgba(239, 68, 68, 0.2)' : 'rgba(124, 58, 237, 0.2)',
-                    color: course.isLocked ? '#FCA5A5' : '#C4B5FD',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4
-                  }}>
-                    {course.isLocked && <Lock size={11} />}
-                    PREMIUM
-                  </span>
-                ) : (
-                  <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.6875rem', fontWeight: 700, background: 'rgba(16, 185, 129, 0.2)', color: '#6EE7B7' }}>
-                    FREE
-                  </span>
-                )}
+                <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.6875rem', fontWeight: 700, background: 'rgba(16, 185, 129, 0.2)', color: '#6EE7B7' }}>
+                  MIỄN PHÍ
+                </span>
               </div>
 
               <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '8px' }}>{course.title}</h3>
@@ -107,7 +79,7 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
                 <BookOpen size={14} /> {course.chaptersCount || 1} Chương
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#A78BFA', fontWeight: 600 }}>
-                <PlayCircle size={14} /> {course.isLocked ? 'Yêu cầu mở khóa' : 'Vào học ngay'}
+                <PlayCircle size={14} /> Vào học ngay
               </div>
             </div>
           </div>
@@ -127,18 +99,6 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
               <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => setSelectedCourse(null)}>Đóng</button>
             </div>
 
-            {selectedCourse.isLocked ? (
-              <div style={{ textAlign: 'center', padding: '32px 16px', background: '#1B1A30', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
-                <Lock size={36} color="#EF4444" style={{ margin: '0 auto 10px auto' }} />
-                <h4 style={{ fontWeight: 700, marginBottom: '6px' }}>Nội dung này yêu cầu quyền truy cập Premium</h4>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                  Vui lòng kích hoạt License KEY có dịch vụ Courses hoặc liên hệ IB của bạn để được hỗ trợ mở khóa.
-                </p>
-                <button className="btn-desk btn-desk-primary" onClick={() => { setSelectedCourse(null); onOpenKeyModal(); }}>
-                  Kích hoạt License KEY ngay
-                </button>
-              </div>
-            ) : (
               <div style={{ maxHeight: '380px', overflowY: 'auto' }}>
                 {selectedCourse.chapters?.map((ch: any) => (
                   <div key={ch.id} style={{ marginBottom: '16px' }}>
@@ -170,7 +130,6 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
                   </div>
                 ))}
               </div>
-            )}
           </div>
         </div>
       )}

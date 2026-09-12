@@ -5,9 +5,7 @@ import { AuthenticatedRequest } from '../middlewares/auth';
 // Lấy danh sách khóa học
 export async function listCourses(req: AuthenticatedRequest, res: Response) {
   try {
-    const isOwnerOrIb = req.user?.role === 'OWNER' || req.user?.role === 'IB';
-    const hasPremiumKey = req.user?.allowedServices?.includes('courses') || false;
-    const canAccessPremium = isOwnerOrIb || hasPremiumKey;
+    const canAccessPremium = true; // Hỗ trợ & Đào tạo miễn phí hoàn toàn
 
     const courses = await prisma.course.findMany({
       where: { isPublished: true },
@@ -45,9 +43,7 @@ export async function listCourses(req: AuthenticatedRequest, res: Response) {
 export async function getCourseDetail(req: AuthenticatedRequest, res: Response) {
   try {
     const { slug } = req.params;
-    const isOwnerOrIb = req.user?.role === 'OWNER' || req.user?.role === 'IB';
-    const hasPremiumKey = req.user?.allowedServices?.includes('courses') || false;
-    const canAccessPremium = isOwnerOrIb || hasPremiumKey;
+    const canAccessPremium = true; // Hỗ trợ & Đào tạo miễn phí hoàn toàn
 
     const course = await prisma.course.findUnique({
       where: { slug },
