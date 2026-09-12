@@ -48,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Logo */}
         <div className="sidebar-logo">
           <img 
-            src="/logo.jpg?v=2" 
+            src="./logo.jpg" 
             alt="Bạc Môn Đạo" 
             style={{ width: isCollapsed ? '32px' : '40px', height: isCollapsed ? '32px' : '40px', borderRadius: '50%', objectFit: 'contain', border: '1px solid var(--border-subtle)', transition: 'all 0.3s ease' }} 
           />
