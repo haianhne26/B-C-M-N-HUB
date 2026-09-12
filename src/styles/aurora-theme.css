@@ -78,6 +78,8 @@
 }
 .bhx .ticker .live {
   display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff; flex-shrink: 0; position: relative; z-index: 2; font-size: 13px;
+  background: var(--bg); padding: 6px 16px; border-radius: 999px; border: 1px solid var(--bd);
+  box-shadow: 12px 0 24px var(--bg); /* Soft fade for text going behind */
 }
 .bhx .ticker .live .d { width: 8px; height: 8px; background: var(--ok); border-radius: 50%; box-shadow: 0 0 10px var(--ok); animation: bhxPulse 1.6s infinite; }
 .bhx .ticker .track {
