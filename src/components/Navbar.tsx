@@ -17,8 +17,9 @@ export const Navbar: React.FC = () => {
     <header className="navbar">
       <div className="container navbar-container">
         {/* Logo */}
-        <a href="#hero" className="navbar-logo" style={{ padding: '4px 0' }}>
+        <a href="#hero" className="navbar-logo" style={{ padding: '4px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt={siteConfig.siteName} style={{ height: '40px', width: 'auto', borderRadius: '50%' }} />
+          <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--color-text)' }}>{siteConfig.siteName}</span>
         </a>
 
         {/* Desktop Nav Items */}
