@@ -103,14 +103,14 @@ export const CalendarView: React.FC = () => {
       {macroIndicators.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '20px' }}>
           {macroIndicators.map((ind, idx) => (
-            <div key={idx} className="app-card" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#131124', border: '1px solid rgba(124, 58, 237, 0.25)' }}>
+            <div key={idx} className="app-card" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
               <div>
-                <div style={{ fontSize: '0.6875rem', color: '#9CA3AF', textTransform: 'uppercase' }}>{ind.label}</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', fontFamily: 'var(--font-mono)' }}>{ind.value}</div>
+                <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{ind.label}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', fontFamily: 'var(--font-mono)' }}>{ind.value}</div>
               </div>
-              <div style={{ textAlign: 'right', fontSize: '0.6875rem', color: '#A78BFA' }}>
+              <div style={{ textAlign: 'right', fontSize: '0.6875rem', color: 'var(--primary)' }}>
                 <TrendingUp size={16} />
-                <div>{ind.date}</div>
+                <div style={{ color: 'var(--text-muted)' }}>{ind.date}</div>
               </div>
             </div>
           ))}
@@ -194,7 +194,7 @@ export const CalendarView: React.FC = () => {
                 return (
                   <tr key={evt.id}>
                     <td>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#FFFFFF' }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-main)' }}>
                         {timeStr}
                       </div>
                       <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>
@@ -203,8 +203,8 @@ export const CalendarView: React.FC = () => {
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontWeight: 800, fontSize: '0.875rem', color: '#FFFFFF' }}>{evt.currency || evt.country}</span>
-                        <span style={{ fontSize: '0.6875rem', padding: '1px 5px', borderRadius: '3px', background: '#1E1B4B', color: '#A78BFA' }}>
+                        <span style={{ fontWeight: 800, fontSize: '0.875rem', color: 'var(--text-main)' }}>{evt.currency || evt.country}</span>
+                        <span style={{ fontSize: '0.6875rem', padding: '1px 5px', borderRadius: '3px', background: 'var(--bg-input)', color: 'var(--text-secondary)' }}>
                           {evt.country}
                         </span>
                       </div>
@@ -223,20 +223,20 @@ export const CalendarView: React.FC = () => {
                         {evt.impact === 'HIGH' ? '🔴 HIGH' : evt.impact === 'MEDIUM' ? '🟠 MED' : '🟡 LOW'}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 600, color: '#F3F4F6' }}>
+                    <td style={{ fontWeight: 600, color: 'var(--text-main)' }}>
                       {evt.eventName}
                     </td>
                     <td style={{
                       fontFamily: 'var(--font-mono)',
                       fontWeight: 800,
                       fontSize: '0.9375rem',
-                      color: evt.actual ? '#10B981' : 'var(--text-muted)',
-                      background: evt.actual ? 'rgba(16, 185, 129, 0.08)' : 'transparent',
+                      color: evt.actual ? 'var(--bullish)' : 'var(--text-muted)',
+                      background: evt.actual ? 'var(--bullish-bg)' : 'transparent',
                       borderRadius: '4px'
                     }}>
                       {evt.actual || '—'}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', color: '#D1D5DB' }}>
+                    <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
                       {evt.forecast || '—'}
                     </td>
                     <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>

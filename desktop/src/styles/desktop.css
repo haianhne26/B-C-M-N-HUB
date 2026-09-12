@@ -430,7 +430,7 @@ body.desktop-body {
   font-size: 1.625rem;
   font-weight: 800;
   font-family: var(--font-mono);
-  color: #FFFFFF;
+  color: var(--text-main);
 }
 
 /* Buttons */
@@ -502,12 +502,12 @@ body.desktop-body {
 
 .app-table td {
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border-subtle);
   color: var(--text-main);
 }
 
 .app-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card-hover);
 }
 
 /* Modals */
@@ -526,9 +526,9 @@ body.desktop-body {
 }
 
 .modal-card {
-  background: #141324;
-  border: 1px solid rgba(124, 58, 237, 0.4);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(124, 58, 237, 0.15);
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   border-radius: var(--radius-xl);
   width: 100%;
   max-width: 480px;
@@ -568,7 +568,7 @@ body.desktop-body {
   background: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  color: #FFFFFF;
+  color: var(--text-main);
   font-size: 0.9375rem;
   font-family: inherit;
   outline: none;
@@ -577,7 +577,7 @@ body.desktop-body {
 
 .form-input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 /* CRM Redesign Styles */
