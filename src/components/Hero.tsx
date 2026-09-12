@@ -43,7 +43,7 @@ export const Hero: React.FC = () => {
           </div>
 
           {/* Right Column: High Fidelity 3D Scene */}
-          <div className="hero-mockup-col" style={{ position: 'relative', height: '100%', minHeight: '500px' }}>
+          <div className="hero-mockup-col hero-3d-col">
             <HeroScene />
           </div>
         </div>

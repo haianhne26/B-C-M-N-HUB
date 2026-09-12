@@ -861,7 +861,7 @@
     left: 0;
     width: 100%;
     height: calc(100vh - var(--header-height));
-    background: #FFFFFF;
+    background: var(--bg);
     padding: 28px 24px;
     z-index: 999;
     gap: 20px;
@@ -871,6 +871,7 @@
   .mobile-nav-overlay a {
     font-size: 1.125rem;
     font-weight: 600;
+    color: var(--tx);
     padding: 10px 0;
     border-bottom: 1px solid var(--color-border-subtle);
   }

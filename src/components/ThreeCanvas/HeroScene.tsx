@@ -56,8 +56,8 @@ const TechCore = () => {
 
 export const HeroScene: React.FC = () => {
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '500px', cursor: 'grab' }}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 2]}>
+    <div className="hero-scene-container" style={{ width: '100%', height: '100%', cursor: 'grab' }}>
+      <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 1.5]}>
         {/* Ambient & directional light */}
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 10]} intensity={1} color="#FF923A" />

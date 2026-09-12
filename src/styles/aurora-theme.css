@@ -154,3 +154,67 @@
   position: fixed; top: 0; left: 0; height: 2px; width: 100%; transform: scaleX(0); transform-origin: 0 50%; z-index: 60;
   background: linear-gradient(90deg, var(--ink), var(--ink-2)); box-shadow: 0 0 14px var(--glow);
 }
+
+/* ============================================================
+   RESPONSIVE MEDIA QUERIES (AURORA)
+============================================================ */
+.bhx .hero-3d-col {
+  position: relative; height: 100%; min-height: 500px;
+}
+.bhx .hero-scene-container {
+  width: 100%; height: 100%; min-height: 500px; cursor: grab;
+}
+
+@media (max-width: 1024px) {
+  .bhx .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .bhx .hero-mockup-col {
+    grid-row: 1; /* Move 3D object to top on tablet/mobile */
+  }
+  .bhx .hero-content {
+    text-align: center;
+    align-items: center;
+  }
+  .bhx .hero-actions {
+    justify-content: center;
+  }
+  .bhx .hero-3d-col, .bhx .hero-scene-container {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bhx .hero-3d-col, .bhx .hero-scene-container {
+    min-height: 300px;
+  }
+  .bhx .band {
+    padding: 60px 0;
+  }
+  .bhx .ticker {
+    padding: 10px 16px;
+    gap: 16px;
+  }
+  .bhx .ticker .live {
+    font-size: 11px;
+    padding: 4px 12px;
+  }
+  .bhx .ticker .tk {
+    font-size: 11px;
+  }
+  
+  /* Flex wrap for builder view */
+  .builder-layout {
+    flex-direction: column;
+  }
+  .builder-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .builder-preview {
+    height: calc(100vh - 300px); /* Adjust based on sidebar height */
+  }
+}
