@@ -53,7 +53,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess }) => {
       <div className="modal-card">
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <img 
-            src="/logo.jpg" 
+            src="/logo.jpg?v=2" 
             alt="Bạc Môn Đạo" 
             style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'contain', border: '1px solid var(--border-subtle)', margin: '0 auto 16px auto', display: 'block' }} 
           />
