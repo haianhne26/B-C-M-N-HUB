@@ -13,9 +13,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: path.join(process.env.VITE_PUBLIC, 'favicon.svg'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
     },
@@ -31,6 +29,16 @@ function createWindow() {
   } else {
     win.loadFile(path.join(process.env.DIST, 'index.html'));
   }
+
+  win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
+    if (isMainFrame) {
+      console.error(`Failed to load ${validatedURL}: ${errorCode} ${errorDescription}`);
+    }
+  });
+
+  win.webContents.on('render-process-gone', (_event, details) => {
+    console.error(`Renderer process exited: ${details.reason}`);
+  });
 }
 
 app.on('window-all-closed', () => {

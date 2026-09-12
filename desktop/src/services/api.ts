@@ -16,7 +16,14 @@ export function clearAuthToken() {
 
 export function getCachedUser(): any | null {
   const data = localStorage.getItem('bmh_user');
-  return data ? JSON.parse(data) : null;
+  if (!data) return null;
+  try {
+    return JSON.parse(data);
+  } catch {
+    // A corrupt legacy cache must not prevent the login screen from rendering.
+    localStorage.removeItem('bmh_user');
+    return null;
+  }
 }
 
 export function setCachedUser(user: any) {
