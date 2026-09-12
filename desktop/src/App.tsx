@@ -139,7 +139,7 @@ export const App: React.FC = () => {
               {currentView === 'ai' && <AIView />}
               {currentView === 'courses' && <CoursesView onOpenKeyModal={() => setShowKeyModal(true)} />}
               {currentView === 'calendar' && <CalendarView />}
-              {currentView === 'ib-overview' && <IBOverviewView user={user} />}
+              {currentView === 'ib-overview' && <IBOverviewView user={user} onNavigate={(v) => setCurrentView(v)} />}
               {currentView === 'landing-builder' && <LandingBuilderView />}
               {currentView === 'crm' && <CRMView />}
               {currentView === 'profile' && <ProfileView user={user} />}
