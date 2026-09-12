@@ -55,9 +55,9 @@ export const Header: React.FC<HeaderProps> = ({
             <span>{activeKey ? activeKey : 'Nhập KEY kích hoạt'}</span>
           </div>
         ) : (
-          <div className="key-badge" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#93C5FD', borderColor: 'rgba(59, 130, 246, 0.3)' }}>
+          <div className="key-badge" style={{ background: 'var(--bg-app)', color: 'var(--text-main)', borderColor: 'var(--border-subtle)' }}>
             <UserCheck size={14} />
-            <span>Đặc quyền {userRole} (Full Access)</span>
+            <span>Đặc quyền {userRole}</span>
           </div>
         )}
 
@@ -65,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({
           {userRole}
         </div>
 
-        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF' }}>
+        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>
           {userName}
         </div>
       </div>

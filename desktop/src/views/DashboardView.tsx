@@ -18,10 +18,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     <div>
       {/* Welcome Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, #1A1333 0%, #0F0E1E 100%)',
-        border: '1px solid rgba(124, 58, 237, 0.3)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '28px 32px',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '24px 32px',
         marginBottom: '28px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -30,8 +30,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         gap: '20px'
       }}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', background: 'rgba(124, 58, 237, 0.2)', color: '#C4B5FD', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600, marginBottom: '12px' }}>
-            <Sparkles size={13} /> Chào mừng trở lại
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', background: 'var(--bg-app)', color: 'var(--text-secondary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.75rem', fontWeight: 600, marginBottom: '12px' }}>
+            <Sparkles size={13} color="var(--primary)" /> Chào mừng trở lại
           </div>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '6px' }}>
             Xin chào, {user?.fullName || 'Trader Bạc Môn'}!
@@ -68,23 +68,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         <div className="app-card">
           <div className="app-card-title">
-            <span>Trạng thái License KEY</span>
-            <Key size={16} color="#7C3AED" />
+            <span style={{ color: 'var(--text-secondary)' }}>Trạng thái License KEY</span>
+            <Key size={16} color="var(--primary)" />
           </div>
-          <div className="app-card-value" style={{ fontSize: '1.25rem', color: user?.activeLicenseKey ? '#C4B5FD' : '#EF4444' }}>
+          <div className="app-card-value" style={{ fontSize: '1.25rem', color: user?.activeLicenseKey ? 'var(--text-main)' : 'var(--bearish)' }}>
             {user?.activeLicenseKey ? user.activeLicenseKey : 'Chưa kích hoạt'}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#A78BFA', marginTop: '6px', cursor: 'pointer' }} onClick={onOpenKeyModal}>
+          <div style={{ fontSize: '0.75rem', color: user?.activeLicenseKey ? 'var(--primary)' : 'var(--text-muted)', marginTop: '6px', cursor: 'pointer' }} onClick={onOpenKeyModal}>
             {user?.activeLicenseKey ? 'Đã cấp phép 4/4 module' : '👉 Nhấn để nhập KEY'}
           </div>
         </div>
 
         <div className="app-card">
           <div className="app-card-title">
-            <span>Bảo vệ rủi ro</span>
+            <span style={{ color: 'var(--text-secondary)' }}>Bảo vệ rủi ro</span>
             <ShieldCheck size={16} color="#3B82F6" />
           </div>
-          <div className="app-card-value" style={{ color: '#60A5FA' }}>
+          <div className="app-card-value" style={{ color: 'var(--text-main)' }}>
             R:R 1 : 3.0+
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '6px' }}>
@@ -110,8 +110,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
         <div className="app-card" style={{ cursor: 'pointer' }} onClick={() => onNavigate('trading')}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h4 style={{ fontWeight: 700, fontSize: '1.0625rem' }}>Dashboard Giao Dịch MT5</h4>
-            <ArrowUpRight size={18} color="#7C3AED" />
+            <h4 style={{ fontWeight: 700, fontSize: '1.0625rem', color: 'var(--text-main)' }}>Dashboard Giao Dịch MT5</h4>
+            <ArrowUpRight size={18} color="var(--primary)" />
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
             Theo dõi vị thế lệnh, lãi lỗ thời gian thực và quản lý khối lượng vào lệnh qua cầu nối MT5 Bridge an toàn.
@@ -120,8 +120,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         <div className="app-card" style={{ cursor: 'pointer' }} onClick={() => onNavigate('ai')}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h4 style={{ fontWeight: 700, fontSize: '1.0625rem' }}>Trợ Lý AI Phân Tích Kỹ Thuật</h4>
-            <ArrowUpRight size={18} color="#7C3AED" />
+            <h4 style={{ fontWeight: 700, fontSize: '1.0625rem', color: 'var(--text-main)' }}>Trợ Lý AI Phân Tích Kỹ Thuật</h4>
+            <ArrowUpRight size={18} color="var(--primary)" />
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
             Chụp và gửi ảnh chart để nhận định Market Bias (BUY/SELL), Entry, Stop Loss, Take Profit và lý do vào lệnh.
@@ -130,8 +130,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         <div className="app-card" style={{ cursor: 'pointer' }} onClick={() => onNavigate('courses')}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h4 style={{ fontWeight: 700, fontSize: '1.0625rem' }}>Kho Khóa Học & Tài Liệu</h4>
-            <ArrowUpRight size={18} color="#7C3AED" />
+            <h4 style={{ fontWeight: 700, fontSize: '1.0625rem', color: 'var(--text-main)' }}>Kho Khóa Học & Tài Liệu</h4>
+            <ArrowUpRight size={18} color="var(--primary)" />
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
             Hệ thống video giáo dục thực chiến: Fibo Matrix, Price Action, Bí quyết giao dịch Vàng (XAU/USD).

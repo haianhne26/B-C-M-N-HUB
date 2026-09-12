@@ -38,12 +38,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div>
         {/* Logo */}
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">
-            <Zap size={20} color="#FFFFFF" />
-          </div>
+          <img 
+            src="/logo.jpg" 
+            alt="Bạc Môn Đạo" 
+            style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'contain', border: '1px solid var(--border-subtle)' }} 
+          />
           <div>
-            <div className="sidebar-logo-title">BẠC MÔN HUB</div>
-            <div style={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>Terminal v1.0.0</div>
+            <div className="sidebar-logo-title" style={{ color: 'var(--text-main)' }}>BẠC MÔN ĐẠO</div>
+            <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Terminal v1.0.0</div>
           </div>
         </div>
 
@@ -176,7 +178,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <div
           className="sidebar-item"
-          style={{ color: '#EF4444' }}
+          style={{ color: 'var(--bearish)', marginTop: '8px' }}
           onClick={onLogout}
         >
           <LogOut size={18} />

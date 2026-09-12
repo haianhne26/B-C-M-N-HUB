@@ -2,24 +2,25 @@
    BẠC MÔN HUB — DESKTOP PLATFORM DESIGN SYSTEM
 ============================================================ */
 :root {
-  --bg-app: #090812;
-  --bg-sidebar: #0E0D1A;
-  --bg-header: #121122;
-  --bg-card: #151426;
-  --bg-card-hover: #1C1A32;
-  --bg-input: #100F1E;
+  /* Flat Minimalist Trading Palette (Binance/TradingView inspired) */
+  --bg-app: #0B0E11;
+  --bg-sidebar: #181A20;
+  --bg-header: #181A20;
+  --bg-card: #1E2329;
+  --bg-card-hover: #2B3139;
+  --bg-input: #2B3139;
   
-  --primary: #7C3AED;
-  --primary-hover: #6D28D9;
-  --primary-light: #EDE9FE;
-  --primary-glow: rgba(124, 58, 237, 0.25);
+  --primary: #FCD535; /* Gold Accent */
+  --primary-hover: #F0B90B;
+  --primary-light: rgba(252, 213, 53, 0.15);
+  --primary-glow: transparent; /* No glow in flat design */
   
-  --border-subtle: #23213B;
-  --border-light: rgba(255, 255, 255, 0.08);
+  --border-subtle: #2B3139;
+  --border-light: #474D57;
 
-  --text-main: #FFFFFF;
-  --text-secondary: #9CA3AF;
-  --text-muted: #6B7280;
+  --text-main: #EAECEF;
+  --text-secondary: #B7BDC6;
+  --text-muted: #848E9C;
 
   --bullish: #10B981;
   --bullish-bg: rgba(16, 185, 129, 0.12);
@@ -119,24 +120,24 @@ body.desktop-body {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  border-left: 3px solid transparent; /* Flat indicator */
 }
 
 .sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: #FFFFFF;
+  background: var(--bg-card-hover);
+  color: var(--text-main);
 }
 
 .sidebar-item.active {
-  background: rgba(124, 58, 237, 0.15);
-  color: #C4B5FD;
-  border-color: rgba(124, 58, 237, 0.3);
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-left-color: var(--primary);
   font-weight: 600;
 }
 
