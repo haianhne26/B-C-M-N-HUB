@@ -641,8 +641,9 @@ body.desktop-body {
 }
 
 .crm-table-card {
-  background: #FFFFFF;
-  color: #1F2937;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   flex: 1;
@@ -651,12 +652,12 @@ body.desktop-body {
   overflow: hidden;
 }
 
-/* Force light mode styles on components inside the white card */
+/* Base styles for inner components */
 .crm-table-card input[type="text"],
 .crm-table-card select {
-  background: #FFFFFF;
-  color: #1F2937;
-  border: 1px solid #E5E7EB;
+  background: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
 }
 
 .crm-toolbar {
@@ -664,15 +665,15 @@ body.desktop-body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .crm-search-box {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #F3F4F6;
-  border: 1px solid #E5E7EB;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 6px 12px;
   width: 300px;
@@ -685,7 +686,7 @@ body.desktop-body {
   font-size: 0.875rem;
   outline: none;
   padding: 4px 0;
-  color: #1F2937;
+  color: var(--text-main);
 }
 
 .crm-toolbar-actions {
@@ -696,7 +697,7 @@ body.desktop-body {
 .crm-icon-btn {
   background: transparent;
   border: none;
-  color: #6B7280;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 8px;
   border-radius: var(--radius-sm);
@@ -706,8 +707,8 @@ body.desktop-body {
 }
 
 .crm-icon-btn:hover {
-  background: #F3F4F6;
-  color: #1F2937;
+  background: var(--bg-card-hover);
+  color: var(--text-main);
 }
 
 .crm-table-wrapper {
@@ -719,28 +720,28 @@ body.desktop-body {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
-  color: #374151;
+  color: var(--text-main);
 }
 
 .crm-table th {
   padding: 14px 16px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #6B7280;
+  color: var(--text-secondary);
   text-transform: uppercase;
   text-align: left;
-  border-bottom: 2px solid #F3F4F6;
+  border-bottom: 2px solid var(--border-subtle);
   white-space: nowrap;
 }
 
 .crm-table td {
   padding: 16px 16px;
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid var(--border-subtle);
   vertical-align: middle;
 }
 
 .crm-table tr:hover td {
-  background: #F9FAFB;
+  background: var(--bg-card-hover);
 }
 
 .crm-badge {
@@ -754,10 +755,10 @@ body.desktop-body {
   white-space: nowrap;
 }
 
-.crm-badge-blue { background: #DBEAFE; color: #2563EB; }
-.crm-badge-gray { background: #F3F4F6; color: #4B5563; }
-.crm-badge-orange { background: #FFEDD5; color: #EA580C; }
-.crm-badge-green { background: #D1FAE5; color: #059669; }
+.crm-badge-blue { background: rgba(59, 130, 246, 0.15); color: #60A5FA; }
+.crm-badge-gray { background: var(--bg-card-hover); color: var(--text-secondary); }
+.crm-badge-orange { background: rgba(249, 115, 22, 0.15); color: #FB923C; }
+.crm-badge-green { background: rgba(16, 185, 129, 0.15); color: #34D399; }
 
 /* Cho phép select hiển thị như một badge thực sự */
 .crm-badge-inline {
@@ -776,8 +777,8 @@ body.desktop-body {
 }
 
 .crm-channel-badge {
-  background: #FFF7ED;
-  color: #C2410C;
+  background: rgba(249, 115, 22, 0.15);
+  color: #FB923C;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -794,17 +795,17 @@ body.desktop-body {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px dashed #D1D5DB;
+  border: 1px dashed var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9CA3AF;
+  color: var(--text-secondary);
   font-size: 0.6rem;
   cursor: pointer;
 }
 
 .crm-tag-icon:hover {
-  background: #F3F4F6;
+  background: var(--bg-card-hover);
 }
 
 .crm-row-actions {
@@ -820,7 +821,7 @@ body.desktop-body {
   gap: 6px;
   background: transparent;
   border: 1px solid transparent;
-  color: #6B7280;
+  color: var(--text-secondary);
   font-size: 0.8125rem;
   padding: 6px 10px;
   border-radius: var(--radius-sm);
@@ -829,15 +830,15 @@ body.desktop-body {
 }
 
 .crm-action-btn:hover {
-  background: #F3F4F6;
-  border-color: #E5E7EB;
-  color: #1F2937;
+  background: var(--bg-card-hover);
+  border-color: var(--border-subtle);
+  color: var(--text-main);
 }
 
 .crm-action-btn-icon {
   background: transparent;
   border: none;
-  color: #9CA3AF;
+  color: var(--text-secondary);
   padding: 6px;
   cursor: pointer;
   display: flex;
@@ -847,8 +848,8 @@ body.desktop-body {
 }
 
 .crm-action-btn-icon:hover {
-  color: #1F2937;
-  background: #F3F4F6;
+  color: var(--text-main);
+  background: var(--bg-card-hover);
 }
 
 .crm-table-footer {
@@ -856,19 +857,19 @@ body.desktop-body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: #FFFFFF;
-  border-top: 1px solid #E5E7EB;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-subtle);
   font-size: 0.8125rem;
-  color: #6B7280;
+  color: var(--text-secondary);
 }
 
 /* Tag Modal Styles */
 .crm-tag-modal {
-  background: #FFFFFF;
+  background: var(--bg-sidebar);
   border-radius: var(--radius-lg);
   width: 100%;
   max-width: 600px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -879,7 +880,7 @@ body.desktop-body {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px 16px;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .crm-tag-modal-body {

@@ -262,7 +262,7 @@ export const CRMView: React.FC = () => {
                       <Star 
                         size={18} 
                         fill={pinnedIds.has(lead.id) ? '#F59E0B' : 'none'} 
-                        color={pinnedIds.has(lead.id) ? '#F59E0B' : '#D1D5DB'} 
+                        color={pinnedIds.has(lead.id) ? '#F59E0B' : 'var(--text-muted)'} 
                         style={{ transition: 'all 0.2s' }}
                       />
                     </button>
@@ -271,7 +271,7 @@ export const CRMView: React.FC = () => {
                     {lead.tags && lead.tags.length > 0 ? (
                       <div className="crm-tags-list" onClick={() => handleOpenTagModal(lead)} style={{ cursor: 'pointer', display: 'flex', gap: '4px', flexWrap: 'wrap', maxWidth: '120px' }}>
                         {lead.tags.slice(0, 2).map((t: any) => (
-                          <span key={t.id} style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: '#F3F4F6', color: '#4B5563', whiteSpace: 'nowrap' }}>
+                          <span key={t.id} style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: 'var(--bg-card-hover)', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                             {t.name}
                           </span>
                         ))}
@@ -292,7 +292,7 @@ export const CRMView: React.FC = () => {
                       <Phone size={14} /> 
                       <span>{lead.phone}</span>
                       {copiedPhone === lead.phone && (
-                        <span style={{ position: 'absolute', top: '-28px', left: '50%', transform: 'translateX(-50%)', background: '#1F2937', color: '#fff', fontSize: '0.7rem', padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
+                        <span style={{ position: 'absolute', top: '-28px', left: '50%', transform: 'translateX(-50%)', background: 'var(--text-main)', color: 'var(--bg-card)', fontSize: '0.7rem', padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
                           ✔ Đã copy!
                         </span>
                       )}
@@ -395,12 +395,12 @@ export const CRMView: React.FC = () => {
         <div className="modal-overlay">
           <div className="crm-tag-modal">
             <div className="crm-tag-modal-header">
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1F2937' }}>Gán tag cho lead</h3>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)' }}>Gán tag cho lead</h3>
               <button className="crm-icon-btn" onClick={() => setTagModalLead(null)}><X size={20} /></button>
             </div>
             
             <div className="crm-tag-modal-body">
-              <div style={{ marginBottom: '8px', fontSize: '0.875rem', color: '#4B5563' }}>Chọn tag</div>
+              <div style={{ marginBottom: '8px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Chọn tag</div>
               <div 
                 style={{ fontSize: '0.875rem', color: '#F97316', cursor: 'pointer', marginBottom: '16px', fontWeight: 500 }}
                 onClick={() => setSelectedTags(STANDARD_TAGS.map(t => t.name))}
