@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   LayoutDashboard,
   TrendingUp,
@@ -13,7 +13,11 @@ import {
   FileText,
   Zap,
   LogOut,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Settings
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -33,19 +37,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenKeyModal,
   hasActiveKey
 }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isAdminExpanded, setIsAdminExpanded] = useState(false);
+
+  const isActiveAdmin = currentView.startsWith('admin-');
+
   return (
-    <aside className="desktop-sidebar">
+    <aside className={`desktop-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div>
         {/* Logo */}
         <div className="sidebar-logo">
           <img 
             src="/logo.jpg" 
             alt="Bạc Môn Đạo" 
-            style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'contain', border: '1px solid var(--border-subtle)' }} 
+            style={{ width: isCollapsed ? '32px' : '40px', height: isCollapsed ? '32px' : '40px', borderRadius: '50%', objectFit: 'contain', border: '1px solid var(--border-subtle)', transition: 'all 0.3s ease' }} 
           />
           <div>
             <div className="sidebar-logo-title" style={{ color: 'var(--text-main)' }}>BẠC MÔN ĐẠO</div>
-            <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Terminal v1.0.0</div>
+            <div className="sidebar-logo-desc" style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Terminal v1.0.0</div>
           </div>
         </div>
 
@@ -120,44 +129,52 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <>
               <div className="sidebar-section-title">Quản trị Hệ thống</div>
               <div
-                className={`sidebar-item ${currentView === 'admin-overview' ? 'active' : ''}`}
-                onClick={() => onSelectView('admin-overview')}
+                className={`sidebar-item ${isActiveAdmin && !isAdminExpanded ? 'active' : ''}`}
+                onClick={() => {
+                  if (isCollapsed) setIsCollapsed(false);
+                  setIsAdminExpanded(!isAdminExpanded);
+                }}
+                title="Quản trị Hệ thống"
               >
-                <Shield size={18} />
-                <span>Admin Overview</span>
+                <Settings size={18} />
+                <span style={{ flex: 1 }}>Quản trị Hệ thống</span>
+                {!isCollapsed && (isAdminExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />)}
               </div>
-
-              <div
-                className={`sidebar-item ${currentView === 'admin-users' ? 'active' : ''}`}
-                onClick={() => onSelectView('admin-users')}
-              >
-                <Users2 size={18} />
-                <span>Quản lý User</span>
-              </div>
-
-              <div
-                className={`sidebar-item ${currentView === 'admin-keys' ? 'active' : ''}`}
-                onClick={() => onSelectView('admin-keys')}
-              >
-                <Key size={18} />
-                <span>Quản lý License KEY</span>
-              </div>
-
-              <div
-                className={`sidebar-item ${currentView === 'admin-updates' ? 'active' : ''}`}
-                onClick={() => onSelectView('admin-updates')}
-              >
-                <DownloadCloud size={18} />
-                <span>Cập nhật App</span>
-              </div>
-
-              <div
-                className={`sidebar-item ${currentView === 'admin-logs' ? 'active' : ''}`}
-                onClick={() => onSelectView('admin-logs')}
-              >
-                <FileText size={18} />
-                <span>Audit Logs</span>
-              </div>
+              
+              {isAdminExpanded && !isCollapsed && (
+                <div className="sidebar-submenu">
+                  <div
+                    className={`sidebar-item ${currentView === 'admin-overview' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-overview')}
+                  >
+                    <span>Overview</span>
+                  </div>
+                  <div
+                    className={`sidebar-item ${currentView === 'admin-users' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-users')}
+                  >
+                    <span>Users</span>
+                  </div>
+                  <div
+                    className={`sidebar-item ${currentView === 'admin-keys' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-keys')}
+                  >
+                    <span>License KEYs</span>
+                  </div>
+                  <div
+                    className={`sidebar-item ${currentView === 'admin-updates' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-updates')}
+                  >
+                    <span>Cập nhật App</span>
+                  </div>
+                  <div
+                    className={`sidebar-item ${currentView === 'admin-logs' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-logs')}
+                  >
+                    <span>Audit Logs</span>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -168,21 +185,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {!hasActiveKey && userRole === 'USER' && (
           <button
             className="btn-desk btn-desk-primary"
-            style={{ width: '100%', marginBottom: '10px', fontSize: '0.8125rem' }}
+            style={{ width: '100%', marginBottom: '10px', fontSize: '0.8125rem', padding: isCollapsed ? '8px' : '10px 16px', display: 'flex', justifyContent: 'center' }}
             onClick={onOpenKeyModal}
+            title="Kích hoạt KEY"
           >
             <Sparkles size={16} />
-            Kích hoạt KEY
+            {!isCollapsed && <span style={{ marginLeft: '8px' }}>Kích hoạt KEY</span>}
           </button>
         )}
 
         <div
           className="sidebar-item"
-          style={{ color: 'var(--bearish)', marginTop: '8px' }}
+          style={{ color: 'var(--bearish)', marginTop: '8px', cursor: 'pointer' }}
           onClick={onLogout}
+          title="Đăng xuất"
         >
           <LogOut size={18} />
           <span>Đăng xuất</span>
+        </div>
+
+        {/* Toggle Collapse Button */}
+        <div 
+          className="sidebar-item" 
+          style={{ marginTop: '12px', justifyContent: isCollapsed ? 'center' : 'flex-end', color: 'var(--text-muted)' }}
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          title="Thu gọn Menu"
+        >
+          {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </div>
       </div>
     </aside>

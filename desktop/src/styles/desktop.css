@@ -70,6 +70,32 @@ body.desktop-body {
   justify-content: space-between;
   flex-shrink: 0;
   padding: 20px 14px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.desktop-sidebar.collapsed {
+  width: 72px;
+  padding: 20px 8px;
+}
+
+.desktop-sidebar.collapsed .sidebar-logo {
+  justify-content: center;
+  padding: 8px 0 20px 0;
+}
+
+.desktop-sidebar.collapsed .sidebar-logo-title,
+.desktop-sidebar.collapsed .sidebar-logo-desc,
+.desktop-sidebar.collapsed .sidebar-section-title,
+.desktop-sidebar.collapsed .sidebar-item span,
+.desktop-sidebar.collapsed .sidebar-submenu,
+.desktop-sidebar.collapsed .sidebar-footer span {
+  display: none;
+}
+
+.desktop-sidebar.collapsed .sidebar-item {
+  justify-content: center;
+  padding: 12px;
 }
 
 .sidebar-logo {
@@ -139,6 +165,21 @@ body.desktop-body {
   color: var(--text-main);
   border-left-color: var(--primary);
   font-weight: 600;
+}
+
+.sidebar-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 20px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.sidebar-submenu .sidebar-item {
+  font-size: 0.8125rem;
+  padding: 8px 12px;
+  border-left: none;
 }
 
 .sidebar-footer {
