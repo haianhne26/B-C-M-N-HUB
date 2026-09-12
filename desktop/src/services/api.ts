@@ -340,5 +340,40 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify({ adminReply, status })
     });
+  },
+
+  // 11. Bot & Passview
+  async getBotResources() {
+    return request('/resources/bots');
+  },
+
+  async createBotResource(payload: any) {
+    return request('/admin/resources/bots', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async deleteBotResource(id: string) {
+    return request(`/admin/resources/bots/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async getPassviewAccounts() {
+    return request('/resources/passviews');
+  },
+
+  async createPassviewAccount(payload: any) {
+    return request('/admin/resources/passviews', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async deletePassviewAccount(id: string) {
+    return request(`/admin/resources/passviews/${id}`, {
+      method: 'DELETE'
+    });
   }
 };

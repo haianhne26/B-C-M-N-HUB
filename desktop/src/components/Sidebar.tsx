@@ -19,7 +19,8 @@ import {
   ChevronDown,
   Settings,
   Video,
-  HelpCircle
+  HelpCircle,
+  Cpu
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -112,6 +113,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             <Video size={18} />
             <span>Booking Zoom</span>
+          </div>
+
+          <div
+            className={`sidebar-item ${currentView === 'bot-passview' ? 'active' : ''}`}
+            onClick={() => onSelectView('bot-passview')}
+          >
+            <Cpu size={18} />
+            <span>Bot & Passview</span>
           </div>
 
           <div

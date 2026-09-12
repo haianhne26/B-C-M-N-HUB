@@ -15,6 +15,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
   const [logs, setLogs] = useState<any[]>([]);
   const [tickets, setTickets] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [bots, setBots] = useState<any[]>([]);
+  const [passviews, setPassviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Key Generation State
@@ -43,6 +45,21 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
   const [lessonVideoUrl, setLessonVideoUrl] = useState('');
   const [lessonPreview, setLessonPreview] = useState(false);
   const [allCourses, setAllCourses] = useState<any[]>([]);
+
+  // Bot & Passview State
+  const [botTitle, setBotTitle] = useState('');
+  const [botDesc, setBotDesc] = useState('');
+  const [botUrl, setBotUrl] = useState('');
+  const [botVersion, setBotVersion] = useState('');
+  const [botPremium, setBotPremium] = useState(false);
+
+  const [pvTitle, setPvTitle] = useState('');
+  const [pvBroker, setPvBroker] = useState('');
+  const [pvServer, setPvServer] = useState('');
+  const [pvAccount, setPvAccount] = useState('');
+  const [pvPassword, setPvPassword] = useState('');
+  const [pvDesc, setPvDesc] = useState('');
+  const [pvPremium, setPvPremium] = useState(false);
 
   useEffect(() => {
     setActiveTab(subView);
@@ -76,6 +93,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
         const resBookings = await api.getAllBookings();
         setTickets(resTickets.data || []);
         setBookings(resBookings.data || []);
+      } else if (activeTab === 'resources') {
+        const resBots = await api.getBotResources();
+        const resPv = await api.getPassviewAccounts();
+        setBots(resBots.data || []);
+        setPassviews(resPv.data || []);
       }
     } catch (err) {
       console.error(err);
@@ -205,6 +227,44 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
     }
   };
 
+  const handleCreateBot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.createBotResource({
+        title: botTitle,
+        description: botDesc,
+        downloadUrl: botUrl,
+        version: botVersion,
+        isPremium: botPremium
+      });
+      alert('Đã thêm Bot thành công!');
+      setBotTitle(''); setBotDesc(''); setBotUrl(''); setBotVersion(''); setBotPremium(false);
+      loadTabData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleCreatePassview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.createPassviewAccount({
+        title: pvTitle,
+        broker: pvBroker,
+        server: pvServer,
+        accountNumber: pvAccount,
+        password: pvPassword,
+        description: pvDesc,
+        isPremium: pvPremium
+      });
+      alert('Đã thêm Passview thành công!');
+      setPvTitle(''); setPvBroker(''); setPvServer(''); setPvAccount(''); setPvPassword(''); setPvDesc(''); setPvPremium(false);
+      loadTabData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -258,6 +318,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
             onClick={() => setActiveTab('support')}
           >
             Hỗ trợ & Booking
+          </button>
+          <button
+            className={`btn-desk ${activeTab === 'resources' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
+            onClick={() => setActiveTab('resources')}
+          >
+            Tài nguyên (Bot/PV)
           </button>
         </div>
       </div>
@@ -860,6 +926,153 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
                         >
                           Xem Ghi Chú
                         </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Resources (Bot & Passview) */}
+      {activeTab === 'resources' && (
+        <div style={{ display: 'grid', gap: '24px' }}>
+          {/* Create Bot */}
+          <div className="app-card" style={{ maxWidth: 700 }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Thêm Bot mới</h3>
+            <form onSubmit={handleCreateBot}>
+              <div className="form-group">
+                <label className="form-label">Tên Bot</label>
+                <input type="text" className="form-input" value={botTitle} onChange={e => setBotTitle(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Mô tả</label>
+                <textarea className="form-input" rows={2} value={botDesc} onChange={e => setBotDesc(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Link tải (.ex5 / .ex4 / zip)</label>
+                <input type="url" className="form-input" value={botUrl} onChange={e => setBotUrl(e.target.value)} required />
+              </div>
+              <div style={{ display: 'flex', gap: 16 }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label">Version</label>
+                  <input type="text" className="form-input" value={botVersion} onChange={e => setBotVersion(e.target.value)} placeholder="1.0.0" />
+                </div>
+                <div className="form-group" style={{ flex: 1, display: 'flex', alignItems: 'flex-end', paddingBottom: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input type="checkbox" id="botPremium" checked={botPremium} onChange={e => setBotPremium(e.target.checked)} />
+                    <label htmlFor="botPremium" style={{ color: '#F59E0B', fontWeight: 600 }}>Bot Premium (Cần KEY)</label>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" className="btn-desk btn-desk-primary"><Plus size={16} /> Lưu Bot</button>
+            </form>
+          </div>
+          
+          {/* Bot List */}
+          <div className="app-card">
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Danh sách Bot</h3>
+            <div className="app-table-wrapper">
+              <table className="app-table">
+                <thead>
+                  <tr>
+                    <th>Tên Bot</th>
+                    <th>Version</th>
+                    <th>Link tải</th>
+                    <th>Premium</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bots.map(b => (
+                    <tr key={b.id}>
+                      <td style={{ fontWeight: 600 }}>{b.title}</td>
+                      <td>{b.version}</td>
+                      <td><a href={b.downloadUrl} target="_blank" rel="noreferrer" style={{ color: '#60A5FA' }}>Link tải</a></td>
+                      <td>{b.isPremium ? <span style={{ color: '#F59E0B' }}>Có</span> : 'Không'}</td>
+                      <td>
+                        <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => {
+                          if (confirm('Xóa Bot này?')) api.deleteBotResource(b.id).then(() => loadTabData());
+                        }}>Xóa</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Create Passview */}
+          <div className="app-card" style={{ maxWidth: 700 }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Thêm Passview mới</h3>
+            <form onSubmit={handleCreatePassview}>
+              <div className="form-group">
+                <label className="form-label">Tên / Biệt danh tài khoản</label>
+                <input type="text" className="form-input" value={pvTitle} onChange={e => setPvTitle(e.target.value)} required />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div className="form-group">
+                  <label className="form-label">Sàn (Broker)</label>
+                  <input type="text" className="form-input" value={pvBroker} onChange={e => setPvBroker(e.target.value)} required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Máy chủ (Server)</label>
+                  <input type="text" className="form-input" value={pvServer} onChange={e => setPvServer(e.target.value)} required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Số tài khoản (ID)</label>
+                  <input type="text" className="form-input" value={pvAccount} onChange={e => setPvAccount(e.target.value)} required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Mật khẩu (Password)</label>
+                  <input type="text" className="form-input" value={pvPassword} onChange={e => setPvPassword(e.target.value)} required />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Mô tả chiến lược đánh</label>
+                <textarea className="form-input" rows={2} value={pvDesc} onChange={e => setPvDesc(e.target.value)} />
+              </div>
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input type="checkbox" id="pvPremium" checked={pvPremium} onChange={e => setPvPremium(e.target.checked)} />
+                <label htmlFor="pvPremium" style={{ color: '#F59E0B', fontWeight: 600 }}>Passview Premium (Cần KEY)</label>
+              </div>
+              <button type="submit" className="btn-desk btn-desk-primary"><Plus size={16} /> Lưu Passview</button>
+            </form>
+          </div>
+
+          {/* Passview List */}
+          <div className="app-card">
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '16px' }}>Danh sách Passview</h3>
+            <div className="app-table-wrapper">
+              <table className="app-table">
+                <thead>
+                  <tr>
+                    <th>Tên</th>
+                    <th>Sàn / Server</th>
+                    <th>ID / Pass</th>
+                    <th>Premium</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {passviews.map(pv => (
+                    <tr key={pv.id}>
+                      <td style={{ fontWeight: 600 }}>{pv.title}</td>
+                      <td>
+                        <div>{pv.broker}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{pv.server}</div>
+                      </td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>
+                        <div>{pv.accountNumber}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#60A5FA' }}>{pv.password}</div>
+                      </td>
+                      <td>{pv.isPremium ? <span style={{ color: '#F59E0B' }}>Có</span> : 'Không'}</td>
+                      <td>
+                        <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => {
+                          if (confirm('Xóa Passview này?')) api.deletePassviewAccount(pv.id).then(() => loadTabData());
+                        }}>Xóa</button>
                       </td>
                     </tr>
                   ))}

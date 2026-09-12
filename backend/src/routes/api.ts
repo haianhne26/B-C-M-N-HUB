@@ -32,6 +32,14 @@ import {
   getAllTickets,
   replyTicket
 } from '../controllers/support.controller';
+import {
+  getBotResources,
+  createBotResource,
+  deleteBotResource,
+  getPassviewAccounts,
+  createPassviewAccount,
+  deletePassviewAccount
+} from '../controllers/resource.controller';
 import { authenticateToken, requirePermission, requireServiceLicense } from '../middlewares/auth';
 import { PERMISSIONS } from '../shared';
 
@@ -135,5 +143,16 @@ router.post('/support/tickets', authenticateToken, createTicket);
 router.get('/support/tickets', authenticateToken, getUserTickets);
 router.get('/admin/support/tickets', authenticateToken, getAllTickets);
 router.put('/admin/support/tickets/:id/reply', authenticateToken, replyTicket);
+
+// ==========================================
+// 12. Bot & Passview
+// ==========================================
+router.get('/resources/bots', authenticateToken, getBotResources);
+router.post('/admin/resources/bots', authenticateToken, createBotResource);
+router.delete('/admin/resources/bots/:id', authenticateToken, deleteBotResource);
+
+router.get('/resources/passviews', authenticateToken, getPassviewAccounts);
+router.post('/admin/resources/passviews', authenticateToken, createPassviewAccount);
+router.delete('/admin/resources/passviews/:id', authenticateToken, deletePassviewAccount);
 
 export default router;

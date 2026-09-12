@@ -20,6 +20,7 @@ import { ProfileView } from './views/ProfileView';
 import { IBOverviewView } from './views/IBOverviewView';
 import { BookingZoomView } from './views/BookingZoomView';
 import { SupportTicketView } from './views/SupportTicketView';
+import { BotPassviewView } from './views/BotPassviewView';
 
 export const App: React.FC = () => {
   const [user, setUser] = useState<any | null>(getCachedUser());
@@ -79,6 +80,7 @@ export const App: React.FC = () => {
       case 'courses': return 'Khóa học';
       case 'booking-zoom': return 'Booking Zoom';
       case 'support-ticket': return 'Gửi Ticket Hỗ trợ';
+      case 'bot-passview': return 'Bot Passview';
       case 'calendar': return 'Lịch kinh tế';
       case 'ib-overview': return 'Tổng quan đối tác';
       case 'landing-builder': return 'IB Landing Pages';
@@ -149,6 +151,7 @@ export const App: React.FC = () => {
               {currentView === 'profile' && <ProfileView user={user} />}
               {currentView === 'booking-zoom' && <BookingZoomView />}
               {currentView === 'support-ticket' && <SupportTicketView />}
+              {currentView === 'bot-passview' && <BotPassviewView />}
 
               {/* Admin Views */}
               {currentView.startsWith('admin-') && (
