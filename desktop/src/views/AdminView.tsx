@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Shield, Users, Key, DownloadCloud, FileText, Plus, RefreshCw, Lock, Unlock, AlertCircle } from 'lucide-react';
+import { Shield, Users, Key, DownloadCloud, FileText, Plus, RefreshCw, Lock, Unlock, AlertCircle, Copy } from 'lucide-react';
 
 interface AdminViewProps {
   subView?: string;
@@ -484,8 +484,18 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
               <tbody>
                 {keys.map((k) => (
                   <tr key={k.id}>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#C4B5FD' }}>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#C4B5FD', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {k.keyCode}
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(k.keyCode);
+                          alert('Đã copy mã KEY: ' + k.keyCode);
+                        }}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '2px', display: 'flex' }}
+                        title="Copy Key"
+                      >
+                        <Copy size={14} />
+                      </button>
                     </td>
                     <td>
                       <span style={{
