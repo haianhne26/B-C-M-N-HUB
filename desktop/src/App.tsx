@@ -17,6 +17,7 @@ import { LandingBuilderView } from './views/LandingBuilderView';
 import { CRMView } from './views/CRMView';
 import { AdminView } from './views/AdminView';
 import { ProfileView } from './views/ProfileView';
+import { IBOverviewView } from './views/IBOverviewView';
 
 export const App: React.FC = () => {
   const [user, setUser] = useState<any | null>(getCachedUser());
@@ -75,6 +76,7 @@ export const App: React.FC = () => {
       case 'ai': return 'Bạc Môn AI';
       case 'courses': return 'Khóa học';
       case 'calendar': return 'Lịch kinh tế';
+      case 'ib-overview': return 'Tổng quan đối tác';
       case 'landing-builder': return 'IB Landing Pages';
       case 'crm': return 'Quản lý Lead (CRM)';
       case 'admin-overview': return 'Quản trị hệ thống';
@@ -137,6 +139,7 @@ export const App: React.FC = () => {
               {currentView === 'ai' && <AIView />}
               {currentView === 'courses' && <CoursesView onOpenKeyModal={() => setShowKeyModal(true)} />}
               {currentView === 'calendar' && <CalendarView />}
+              {currentView === 'ib-overview' && <IBOverviewView user={user} />}
               {currentView === 'landing-builder' && <LandingBuilderView />}
               {currentView === 'crm' && <CRMView />}
               {currentView === 'profile' && <ProfileView user={user} />}

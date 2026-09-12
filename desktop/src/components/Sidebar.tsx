@@ -107,6 +107,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <>
               <div className="sidebar-section-title">Đối tác IB</div>
               <div
+                className={`sidebar-item ${currentView === 'ib-overview' ? 'active' : ''}`}
+                onClick={() => onSelectView('ib-overview')}
+              >
+                <TrendingUp size={18} />
+                <span>Tổng quan đối tác</span>
+              </div>
+              <div
                 className={`sidebar-item ${currentView === 'landing-builder' ? 'active' : ''}`}
                 onClick={() => onSelectView('landing-builder')}
               >
