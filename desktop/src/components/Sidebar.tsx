@@ -87,19 +87,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <div
-            className={`sidebar-item ${currentView === 'courses' ? 'active' : ''}`}
-            onClick={() => onSelectView('courses')}
-          >
-            <GraduationCap size={18} />
-            <span>Khóa học</span>
-          </div>
-
-          <div
             className={`sidebar-item ${currentView === 'calendar' ? 'active' : ''}`}
             onClick={() => onSelectView('calendar')}
           >
             <Calendar size={18} />
             <span>Lịch kinh tế</span>
+          </div>
+
+          <div className="sidebar-section-title">Hỗ Trợ & Đào Tạo</div>
+
+          <div
+            className={`sidebar-item ${currentView === 'courses' ? 'active' : ''}`}
+            onClick={() => onSelectView('courses')}
+          >
+            <GraduationCap size={18} />
+            <span>Khóa học</span>
           </div>
 
           {/* IB Menu */}
