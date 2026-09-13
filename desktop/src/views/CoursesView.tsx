@@ -34,11 +34,19 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
   };
 
   const handleOpenCourse = async (slug: string) => {
+    const baseCourse = courses.find(c => c.slug === slug);
+    if (baseCourse) {
+      setSelectedCourse({ ...baseCourse, chapters: [] });
+    }
     try {
       const res = await api.getCourseDetail(slug);
       setSelectedCourse(res.data);
+      if (res.data?.chapters?.[0]?.lessons?.[0]) {
+        setActiveVideoUrl(res.data.chapters[0].lessons[0].videoUrl);
+      }
     } catch (err: any) {
       alert(err.message);
+      setSelectedCourse(null);
     }
   };
 
@@ -97,8 +105,8 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
       {/* Course Detail Modal */}
       {selectedCourse && (
         <div className="modal-overlay">
-          <div className="modal-card" style={{ maxWidth: 640 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+          <div className="modal-card" style={{ maxWidth: 900 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', margin: '0 0 16px 0' }}>
               <div>
                 <span style={{ fontSize: '0.75rem', color: '#A78BFA', fontWeight: 600 }}>{selectedCourse.category}</span>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '4px 0 8px 0' }}>{selectedCourse.title}</h3>
@@ -111,7 +119,7 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
               <div style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
                 <iframe
                   width="100%"
-                  height="400"
+                  height="450"
                   src={getYoutubeEmbedUrl(activeVideoUrl)}
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
