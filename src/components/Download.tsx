@@ -33,7 +33,7 @@ export const DownloadSection: React.FC = () => {
           {/* Main Download Button */}
           <div>
             <a
-              href={downloadUrl}
+              href="https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary btn-lg"

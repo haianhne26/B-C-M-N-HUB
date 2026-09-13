@@ -28,14 +28,14 @@ export const Navbar: React.FC = () => {
             <li><a href="#hero" className="navbar-link">Trang chủ</a></li>
             <li><a href="#features" className="navbar-link">Tính năng</a></li>
             <li><a href="#showcase" className="navbar-link">Giao diện</a></li>
-            <li><a href={siteConfig.downloadUrl} target="_blank" rel="noopener noreferrer" className="navbar-link">Tải xuống</a></li>
+            <li><a href="https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="navbar-link">Tải xuống</a></li>
             <li><a href="#faq" className="navbar-link">FAQ</a></li>
           </ul>
         </nav>
 
         {/* Desktop CTA */}
         <div className="navbar-cta">
-          <a href={siteConfig.downloadUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '0.875rem' }}>
+          <a href="https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '0.875rem' }}>
             <Download size={16} />
             Tải phần mềm
           </a>
@@ -57,10 +57,10 @@ export const Navbar: React.FC = () => {
           <a href="#hero" onClick={closeMobileMenu}>Trang chủ</a>
           <a href="#features" onClick={closeMobileMenu}>Tính năng</a>
           <a href="#showcase" onClick={closeMobileMenu}>Giao diện phần mềm</a>
-          <a href={siteConfig.downloadUrl} target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu}>Tải xuống</a>
+          <a href="https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu}>Tải xuống</a>
           <a href="#faq" onClick={closeMobileMenu}>Câu hỏi thường gặp</a>
           <div style={{ marginTop: '20px' }}>
-            <a href={siteConfig.downloadUrl} target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} className="btn btn-primary" style={{ width: '100%' }}>
+            <a href="https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu} className="btn btn-primary" style={{ width: '100%' }}>
               <Download size={18} />
               Tải phiên bản Windows
             </a>

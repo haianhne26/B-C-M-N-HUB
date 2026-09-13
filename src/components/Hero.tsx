@@ -26,7 +26,7 @@ export const Hero: React.FC = () => {
             </p>
 
             <div className="hero-actions">
-              <a href={siteConfig.downloadUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">
+              <a href="https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg">
                 <Download size={18} />
                 Tải phần mềm
               </a>

@@ -13,7 +13,7 @@ export const FinalCTA: React.FC = () => {
             <p className="final-cta-subheading">{siteConfig.finalCta.subheading}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
               <a
-                href={siteConfig.downloadUrl}
+                href="https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary btn-lg"
