@@ -203,7 +203,7 @@ export const siteConfig: SiteConfig = {
         icon: "windows",
         badge: "Khuyên dùng (v1.0.4)",
         description: "Hỗ trợ Windows 10, 11 (64-bit)",
-        url: "./downloads/Bac-Mon-Hub-Alpha-Setup-1.0.4.exe", // Thay link file .exe hoặc .zip tại đây
+        url: "https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing", // Thay link file .exe hoặc .zip tại đây
         available: true
       },
       {

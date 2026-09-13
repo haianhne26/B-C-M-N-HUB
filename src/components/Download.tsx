@@ -34,7 +34,8 @@ export const DownloadSection: React.FC = () => {
           <div>
             <a
               href={downloadUrl}
-              download
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn btn-primary btn-lg"
               style={{ padding: '18px 40px', fontSize: '1.125rem', borderRadius: 'var(--radius-xl)' }}
             >
@@ -61,7 +62,8 @@ export const DownloadSection: React.FC = () => {
                 {platform.available ? (
                   <a
                     href={platform.url}
-                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="btn btn-primary"
                     style={{ width: '100%', padding: '10px', fontSize: '0.875rem' }}
                   >
