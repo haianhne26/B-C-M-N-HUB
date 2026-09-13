@@ -13,7 +13,9 @@ export const FinalCTA: React.FC = () => {
             <p className="final-cta-subheading">{siteConfig.finalCta.subheading}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
               <a
-                href="#download"
+                href={siteConfig.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn btn-primary btn-lg"
                 style={{
                   background: '#7C3AED',
