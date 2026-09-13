@@ -144,38 +144,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess }) => {
           </button>
         </div>
 
-        {/* Demo Fast Login Buttons */}
-        <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: '0.6875rem', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '8px', textAlign: 'center' }}>
-            Đăng nhập nhanh tài khoản mẫu:
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              type="button"
-              className="btn-desk btn-desk-secondary btn-desk-sm"
-              style={{ flex: 1 }}
-              onClick={() => handleQuickLogin('owner@bacmonhub.com', 'Owner@123456')}
-            >
-              👑 OWNER
-            </button>
-            <button
-              type="button"
-              className="btn-desk btn-desk-secondary btn-desk-sm"
-              style={{ flex: 1 }}
-              onClick={() => handleQuickLogin('ib@bacmonhub.com', 'Ib@123456')}
-            >
-              🤝 IB Partner
-            </button>
-            <button
-              type="button"
-              className="btn-desk btn-desk-secondary btn-desk-sm"
-              style={{ flex: 1 }}
-              onClick={() => handleQuickLogin('user@bacmonhub.com', 'User@123456')}
-            >
-              📈 USER
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
