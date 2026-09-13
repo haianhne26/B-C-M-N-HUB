@@ -88,7 +88,7 @@ export const siteConfig: SiteConfig = {
   description: "Một nền tảng hỗ trợ trader quản lý giao dịch, theo dõi thị trường và sử dụng các công cụ cần thiết trong một giao diện trực quan.",
   
   // Link tải phần mềm chính (thay đổi link file cài đặt tại đây)
-  downloadUrl: "./downloads/Bac-Mon-Hub-Alpha-Setup-1.0.4.exe",
+  downloadUrl: "https://drive.google.com/file/d/1AMEpEiHcgBvUiQLouHEA_-kJeCbFxMy2/view?usp=sharing",
   version: "1.0.4",
   releaseDate: "2026",
 

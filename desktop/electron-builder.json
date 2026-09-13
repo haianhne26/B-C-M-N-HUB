@@ -1,6 +1,6 @@
 {
   "appId": "com.bacmonhub.app",
-  "productName": "Bạc Môn Hub Alpha",
+  "productName": "Bạc Môn Hub Beta 1.0",
   "directories": {
     "output": "release",
     "buildResources": "build"
