@@ -3,7 +3,7 @@ import { siteConfig } from '../config/site';
 import { Download, Laptop, Apple, Smartphone, CheckCircle, Clock } from 'lucide-react';
 
 export const DownloadSection: React.FC = () => {
-  const { downloadSection, downloadUrl } = siteConfig;
+  const { downloadSection } = siteConfig;
 
   const getPlatformIcon = (iconType: string) => {
     switch (iconType) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { siteConfig } from '../config/site';
-import { Menu, X, Download, Zap } from 'lucide-react';
+import { Menu, X, Download } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
