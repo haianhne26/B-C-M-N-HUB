@@ -20,19 +20,26 @@ export async function listCourses(req: AuthenticatedRequest, res: Response) {
     return res.json({
       success: true,
       canAccessPremium,
-      data: courses.map(c => ({
-        id: c.id,
-        title: c.title,
-        slug: c.slug,
-        description: c.description,
-        thumbnailUrl: c.thumbnailUrl,
-        category: c.category,
-        isPremium: c.isPremium,
-        isLocked: c.isPremium && !canAccessPremium,
-        chaptersCount: c.chapters.length,
-        lessonsCount: c.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0),
-        createdAt: c.createdAt,
-      }))
+      data: courses.map(c => {
+        let firstVideoUrl = null;
+        if (c.chapters.length > 0 && c.chapters[0].lessons.length > 0) {
+           firstVideoUrl = c.chapters[0].lessons[0].videoUrl;
+        }
+        return {
+          id: c.id,
+          title: c.title,
+          slug: c.slug,
+          description: c.description,
+          thumbnailUrl: c.thumbnailUrl,
+          category: c.category,
+          isPremium: c.isPremium,
+          isLocked: c.isPremium && !canAccessPremium,
+          chaptersCount: c.chapters.length,
+          lessonsCount: c.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0),
+          createdAt: c.createdAt,
+          firstVideoUrl
+        };
+      })
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, message: 'Lỗi khi tải danh sách khóa học' });

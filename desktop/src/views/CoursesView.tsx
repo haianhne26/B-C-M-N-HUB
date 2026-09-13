@@ -16,6 +16,13 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
     return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}?autoplay=1` : url;
   };
 
+  const getYoutubeThumbnail = (url: string) => {
+    if (!url) return '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? `https://img.youtube.com/vi/${match[2]}/maxresdefault.jpg` : '';
+  };
+
   useEffect(() => {
     loadCourses();
   }, []);
@@ -85,7 +92,14 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
               </div>
 
               <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '8px' }}>{course.title}</h3>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '16px' }}>
+              
+              {(course.thumbnailUrl || getYoutubeThumbnail(course.firstVideoUrl)) && (
+                <div style={{ width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
+                  <img src={course.thumbnailUrl || getYoutubeThumbnail(course.firstVideoUrl)} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              )}
+
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {course.description}
               </p>
             </div>
