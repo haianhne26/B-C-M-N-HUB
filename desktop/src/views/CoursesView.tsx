@@ -6,7 +6,15 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
   const [courses, setCourses] = useState<any[]>([]);
   const [canAccessPremium, setCanAccessPremium] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<any | null>(null);
+  const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const getYoutubeEmbedUrl = (url: string) => {
+    if (!url) return '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}?autoplay=1` : url;
+  };
 
   useEffect(() => {
     loadCourses();
@@ -96,10 +104,23 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '4px 0 8px 0' }}>{selectedCourse.title}</h3>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{selectedCourse.description}</p>
               </div>
-              <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => setSelectedCourse(null)}>Đóng</button>
+              <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => { setSelectedCourse(null); setActiveVideoUrl(null); }}>Đóng</button>
             </div>
 
-              <div style={{ maxHeight: '380px', overflowY: 'auto' }}>
+            {activeVideoUrl && (
+              <div style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+                <iframe
+                  width="100%"
+                  height="400"
+                  src={getYoutubeEmbedUrl(activeVideoUrl)}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
+
+              <div style={{ maxHeight: activeVideoUrl ? '200px' : '400px', overflowY: 'auto', paddingRight: '8px' }}>
                 {selectedCourse.chapters?.map((ch: any) => (
                   <div key={ch.id} style={{ marginBottom: '16px' }}>
                     <div style={{ fontWeight: 700, fontSize: '0.9375rem', marginBottom: '8px', color: '#EDE9FE' }}>
@@ -109,19 +130,22 @@ export const CoursesView: React.FC<{ onOpenKeyModal: () => void }> = ({ onOpenKe
                       {ch.lessons?.map((les: any) => (
                         <div
                           key={les.id}
+                          onClick={() => setActiveVideoUrl(les.videoUrl)}
                           style={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             padding: '10px 14px',
-                            background: '#121124',
+                            background: activeVideoUrl === les.videoUrl ? 'rgba(124, 58, 237, 0.2)' : '#121124',
                             borderRadius: '8px',
-                            border: '1px solid var(--border-subtle)',
+                            border: activeVideoUrl === les.videoUrl ? '1px solid #7C3AED' : '1px solid var(--border-subtle)',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.875rem' }}>
-                            <PlayCircle size={16} color="#7C3AED" />
-                            <span>{les.title}</span>
+                            <PlayCircle size={16} color={activeVideoUrl === les.videoUrl ? '#C4B5FD' : '#7C3AED'} />
+                            <span style={{ color: activeVideoUrl === les.videoUrl ? '#fff' : 'inherit' }}>{les.title}</span>
                           </div>
                           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{les.duration || '15:00'}</span>
                         </div>
