@@ -183,19 +183,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     className={`sidebar-item ${currentView === 'admin-overview' ? 'active' : ''}`}
                     onClick={() => onSelectView('admin-overview')}
                   >
-                    <span>Overview</span>
+                    <span>Tổng quan</span>
                   </div>
                   <div
                     className={`sidebar-item ${currentView === 'admin-users' ? 'active' : ''}`}
                     onClick={() => onSelectView('admin-users')}
                   >
-                    <span>Users</span>
+                    <span>Người dùng</span>
                   </div>
                   <div
                     className={`sidebar-item ${currentView === 'admin-keys' ? 'active' : ''}`}
                     onClick={() => onSelectView('admin-keys')}
                   >
-                    <span>License KEYs</span>
+                    <span>License KEY</span>
                   </div>
                   <div
                     className={`sidebar-item ${currentView === 'admin-updates' ? 'active' : ''}`}
@@ -204,10 +204,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <span>Cập nhật App</span>
                   </div>
                   <div
+                    className={`sidebar-item ${currentView === 'admin-courses' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-courses')}
+                  >
+                    <span>Khóa Học</span>
+                  </div>
+                  <div
                     className={`sidebar-item ${currentView === 'admin-logs' ? 'active' : ''}`}
                     onClick={() => onSelectView('admin-logs')}
                   >
                     <span>Audit Logs</span>
+                  </div>
+                  <div
+                    className={`sidebar-item ${currentView === 'admin-support' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-support')}
+                  >
+                    <span>Hỗ trợ & Booking</span>
+                  </div>
+                  <div
+                    className={`sidebar-item ${currentView === 'admin-resources' ? 'active' : ''}`}
+                    onClick={() => onSelectView('admin-resources')}
+                  >
+                    <span>Tài nguyên (Bot/PV)</span>
                   </div>
                 </div>
               )}

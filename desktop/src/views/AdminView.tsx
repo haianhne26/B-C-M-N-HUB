@@ -275,57 +275,6 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
           </div>
         </div>
 
-        {/* Sub Navigation Tabs */}
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button
-            className={`btn-desk ${activeTab === 'overview' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('overview')}
-          >
-            Tổng quan
-          </button>
-          <button
-            className={`btn-desk ${activeTab === 'users' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('users')}
-          >
-            Người dùng
-          </button>
-          <button
-            className={`btn-desk ${activeTab === 'keys' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('keys')}
-          >
-            License KEY
-          </button>
-          <button
-            className={`btn-desk ${activeTab === 'updates' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('updates')}
-          >
-            Cập nhật App
-          </button>
-          <button
-            className={`btn-desk ${activeTab === 'courses' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('courses')}
-          >
-            Khóa Học
-          </button>
-          <button
-            className={`btn-desk ${activeTab === 'logs' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('logs')}
-          >
-            Audit Logs
-          </button>
-          <button
-            className={`btn-desk ${activeTab === 'support' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('support')}
-          >
-            Hỗ trợ & Booking
-          </button>
-          <button
-            className={`btn-desk ${activeTab === 'resources' ? 'btn-desk-primary' : 'btn-desk-secondary'}`}
-            onClick={() => setActiveTab('resources')}
-          >
-            Tài nguyên (Bot/PV)
-          </button>
-        </div>
       </div>
 
       {/* Tab: Overview */}
