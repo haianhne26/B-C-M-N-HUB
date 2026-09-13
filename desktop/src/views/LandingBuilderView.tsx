@@ -114,70 +114,77 @@ export const LandingBuilderView: React.FC = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    const sections = [
+      {
+        id: 'hero', type: 'Hero',
+        title: heroTitle, subtitle: heroSubtitle, bgImage: heroBgUrl,
+        props: {
+          ctaText: heroCtaText,
+          chips: heroChips.split('\n').map(s => s.trim()).filter(Boolean),
+          trustIndicators: trustIndicators.filter(t => t.value && t.label),
+        }
+      },
+      {
+        id: 'countdown', type: 'Countdown',
+        props: {
+          targetDate: countdownDate || undefined,
+          tickerLines: tickerText.split('\n').map(s => s.trim()).filter(Boolean),
+          slotsTotal,
+          platform: countdownPlatform,
+        }
+      },
+      {
+        id: 'topics', type: 'Topics',
+        props: {
+          topics: topics.map(t => ({ title: t.title, description: t.desc }))
+        }
+      },
+      {
+        id: 'mentor', type: 'MentorProfile',
+        props: {
+          mentorName, mentorTitle, mentorDesc,
+          imageUrl: mentorImageUrl || undefined,
+          stats: mentorStats.filter(s => s.value && s.label),
+        }
+      },
+      {
+        id: 'benefits', type: 'Benefits',
+        title: 'Tại Sao Chọn Chúng Tôi',
+        items: benefits.map(b => b.text)
+      },
+      { id: 'lead-form', type: 'LeadForm', title: formTitle }
+    ];
+
+    const themeConfig = { primaryColor };
+
+    // Optimistic Update
+    const newPage = { id: 'temp-' + Date.now(), title, slug, seoDescription, themeConfig: JSON.stringify(themeConfig), sections: [], ib: null, createdAt: new Date().toISOString() };
+    const previous = [...pages];
+    setPages([newPage as any, ...pages]);
+
+    // Reset Form
+    setTitle(''); setSlug(''); setSeoDescription('');
+    setPrimaryColor('#F46D00');
+    setHeroTitle('Đầu Tư Thông Minh Cùng Bạc Môn'); setHeroSubtitle('Hệ thống hỗ trợ giao dịch chuyên nghiệp...');
+    setHeroBgUrl(''); setHeroCtaText('Đăng Ký Nhận Link Ngay');
+    setHeroChips('Tư duy giao dịch\nPhân tích kỹ thuật\nQuản lý vốn');
+    setTrustIndicators([{ value: '1,000+', label: 'Trader đã tham gia hệ thống' }, { value: '100%', label: 'Miễn phí hoàn toàn' }]);
+    setCountdownDate(''); setTickerText('CHÚ Ý: KHÔNG PHÁT LẠI SAU KHI KẾT THÚC'); setSlotsTotal(1000);
+    setCountdownPlatform('Zoom (link gửi qua Zalo sau khi đăng ký)');
+    setMentorName('Hải Anh'); setMentorTitle('★ Top KOL Forex Việt Nam');
+    setMentorDesc('Trader & Mentor chuyên Vàng, Forex với hơn 8 năm thực chiến...');
+    setMentorImageUrl('');
+    setMentorStats([{ value: '8+ năm', label: 'Kinh nghiệm' }, { value: '300K+', label: 'Theo dõi' }, { value: '8+', label: 'Chủ đề' }]);
+    setBenefits([{ id: '1', text: 'Tín hiệu phân tích chuẩn mỗi ngày' }]);
+    setFormTitle('Đăng Ký Nhận Tư Vấn Miễn Phí');
+    setShowCreate(false); setActiveTab('general');
+
     try {
-      const sections = [
-        {
-          id: 'hero', type: 'Hero',
-          title: heroTitle, subtitle: heroSubtitle, bgImage: heroBgUrl,
-          props: {
-            ctaText: heroCtaText,
-            chips: heroChips.split('\n').map(s => s.trim()).filter(Boolean),
-            trustIndicators: trustIndicators.filter(t => t.value && t.label),
-          }
-        },
-        {
-          id: 'countdown', type: 'Countdown',
-          props: {
-            targetDate: countdownDate || undefined,
-            tickerLines: tickerText.split('\n').map(s => s.trim()).filter(Boolean),
-            slotsTotal,
-            platform: countdownPlatform,
-          }
-        },
-        {
-          id: 'topics', type: 'Topics',
-          props: {
-            topics: topics.map(t => ({ title: t.title, description: t.desc }))
-          }
-        },
-        {
-          id: 'mentor', type: 'MentorProfile',
-          props: {
-            mentorName, mentorTitle, mentorDesc,
-            imageUrl: mentorImageUrl || undefined,
-            stats: mentorStats.filter(s => s.value && s.label),
-          }
-        },
-        {
-          id: 'benefits', type: 'Benefits',
-          title: 'Tại Sao Chọn Chúng Tôi',
-          items: benefits.map(b => b.text)
-        },
-        { id: 'lead-form', type: 'LeadForm', title: formTitle }
-      ];
-
-      const themeConfig = { primaryColor };
       await api.createIBLandingPage({ title, slug, seoDescription, sections, themeConfig });
-
-      // Reset all
-      setTitle(''); setSlug(''); setSeoDescription('');
-      setPrimaryColor('#F46D00');
-      setHeroTitle('Đầu Tư Thông Minh Cùng Bạc Môn'); setHeroSubtitle('Hệ thống hỗ trợ giao dịch chuyên nghiệp...');
-      setHeroBgUrl(''); setHeroCtaText('Đăng Ký Nhận Link Ngay');
-      setHeroChips('Tư duy giao dịch\nPhân tích kỹ thuật\nQuản lý vốn');
-      setTrustIndicators([{ value: '1,000+', label: 'Trader đã tham gia hệ thống' }, { value: '100%', label: 'Miễn phí hoàn toàn' }]);
-      setCountdownDate(''); setTickerText('CHÚ Ý: KHÔNG PHÁT LẠI SAU KHI KẾT THÚC'); setSlotsTotal(1000);
-      setCountdownPlatform('Zoom (link gửi qua Zalo sau khi đăng ký)');
-      setMentorName('Hải Anh'); setMentorTitle('★ Top KOL Forex Việt Nam');
-      setMentorDesc('Trader & Mentor chuyên Vàng, Forex với hơn 8 năm thực chiến...');
-      setMentorImageUrl('');
-      setMentorStats([{ value: '8+ năm', label: 'Kinh nghiệm' }, { value: '300K+', label: 'Theo dõi' }, { value: '8+', label: 'Chủ đề' }]);
-      setBenefits([{ id: '1', text: 'Tín hiệu phân tích chuẩn mỗi ngày' }]);
-      setFormTitle('Đăng Ký Nhận Tư Vấn Miễn Phí');
-      setShowCreate(false); setActiveTab('general');
       fetchPages();
     } catch (err: any) {
       alert(err.message);
+      setPages(previous);
     }
   };
 
@@ -190,11 +197,14 @@ export const LandingBuilderView: React.FC = () => {
 
   const handleDelete = async (id: string, pageTitle: string) => {
     if (window.confirm(`Bạn có chắc chắn muốn xóa Landing Page "${pageTitle}" không? Các Leads liên quan sẽ bị xóa.`)) {
+      const previous = [...pages];
+      setPages(pages.filter(p => p.id !== id));
       try {
         await api.deleteIBLandingPage(id);
         fetchPages();
       } catch (err: any) {
         alert(err.message);
+        setPages(previous);
       }
     }
   };

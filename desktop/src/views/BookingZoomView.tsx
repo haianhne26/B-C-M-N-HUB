@@ -27,19 +27,32 @@ export const BookingZoomView: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!topic || !bookingDate) return;
-    setLoading(true);
+    
+    const newBooking = {
+      id: 'temp-' + Date.now(),
+      topic,
+      bookingDate,
+      notes,
+      status: 'PENDING',
+      adminReply: null,
+      zoomLink: null,
+      createdAt: new Date().toISOString()
+    };
+    
+    const previous = [...bookings];
+    setBookings([newBooking as any, ...bookings]);
+    
+    setShowForm(false);
+    setTopic('');
+    setBookingDate('');
+    setNotes('');
+    
     try {
       await api.createZoomBooking({ topic, bookingDate, notes });
-      alert('Đã gửi yêu cầu Booking Zoom thành công. Vui lòng chờ phản hồi.');
-      setShowForm(false);
-      setTopic('');
-      setBookingDate('');
-      setNotes('');
       loadBookings();
     } catch (err: any) {
       alert(err.message || 'Lỗi gửi yêu cầu');
-    } finally {
-      setLoading(false);
+      setBookings(previous);
     }
   };
 

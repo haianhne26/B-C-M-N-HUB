@@ -27,19 +27,31 @@ export const SupportTicketView: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !description) return;
-    setLoading(true);
+    
+    const newTicket = {
+      id: 'temp-' + Date.now(),
+      title,
+      category,
+      description,
+      status: 'OPEN',
+      adminReply: null,
+      createdAt: new Date().toISOString()
+    };
+    
+    const previous = [...tickets];
+    setTickets([newTicket as any, ...tickets]);
+    
+    setShowForm(false);
+    setTitle('');
+    setCategory('TECHNICAL');
+    setDescription('');
+    
     try {
       await api.createSupportTicket({ title, category, description });
-      alert('Đã gửi Ticket hỗ trợ thành công. Đội ngũ sẽ phản hồi sớm nhất.');
-      setShowForm(false);
-      setTitle('');
-      setCategory('TECHNICAL');
-      setDescription('');
       loadTickets();
     } catch (err: any) {
       alert(err.message || 'Lỗi gửi ticket');
-    } finally {
-      setLoading(false);
+      setTickets(previous);
     }
   };
 

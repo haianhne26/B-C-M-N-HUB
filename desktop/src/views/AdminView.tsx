@@ -127,11 +127,14 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
 
   const handleToggleUserStatus = async (id: string, currentStatus: string) => {
     const nextStatus = currentStatus === 'ACTIVE' ? 'BANNED' : 'ACTIVE';
+    const previous = [...users];
+    setUsers(users.map(u => u.id === id ? { ...u, status: nextStatus } : u));
     try {
       await api.toggleUserStatus(id, nextStatus as any);
       loadTabData();
     } catch (err: any) {
       alert(err.message);
+      setUsers(previous);
     }
   };
 
@@ -148,12 +151,14 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
 
   const handleUpdateRole = async (id: string, newRole: string) => {
     if (!window.confirm(`Bạn có chắc chắn muốn chuyển quyền người dùng này thành ${newRole}?`)) return;
+    const previous = [...users];
+    setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
     try {
       await api.updateUserRole(id, newRole);
-      alert(`Đã cấp quyền ${newRole} thành công!`);
       loadTabData();
     } catch (err: any) {
       alert(err.message);
+      setUsers(previous);
     }
   };
 
@@ -188,25 +193,18 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
 
   const handleCreateCourse = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newCourse = { id: 'temp-' + Date.now(), title: courseTitle, slug: courseSlug, description: courseDesc, category: courseCat, thumbnailUrl: courseThumb, isPremium: coursePremium };
+    const previous = [...allCourses];
+    setAllCourses([newCourse, ...allCourses]);
+
+    setCourseTitle(''); setCourseSlug(''); setCourseDesc(''); setCourseCat('Trading'); setCourseThumb(''); setCoursePremium(false);
+
     try {
-      await api.createCourse({
-        title: courseTitle,
-        slug: courseSlug,
-        description: courseDesc,
-        category: courseCat,
-        thumbnailUrl: courseThumb,
-        isPremium: coursePremium
-      });
-      alert(`Đã tải lên khóa học "${courseTitle}" thành công!`);
-      setCourseTitle('');
-      setCourseSlug('');
-      setCourseDesc('');
-      setCourseCat('Trading');
-      setCourseThumb('');
-      setCoursePremium(false);
+      await api.createCourse(newCourse);
       loadTabData();
     } catch (err: any) {
       alert(err.message);
+      setAllCourses(previous);
     }
   };
 
@@ -230,39 +228,59 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
 
   const handleCreateBot = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newBot = { id: 'temp-' + Date.now(), title: botTitle, description: botDesc, downloadUrl: botUrl, version: botVersion, isPremium: botPremium };
+    const previous = [...bots];
+    setBots([newBot, ...bots]);
+    
+    setBotTitle(''); setBotDesc(''); setBotUrl(''); setBotVersion(''); setBotPremium(false);
+    
     try {
-      await api.createBotResource({
-        title: botTitle,
-        description: botDesc,
-        downloadUrl: botUrl,
-        version: botVersion,
-        isPremium: botPremium
-      });
-      alert('Đã thêm Bot thành công!');
-      setBotTitle(''); setBotDesc(''); setBotUrl(''); setBotVersion(''); setBotPremium(false);
-      loadTabData();
+      await api.createBotResource(newBot);
+      loadTabData(); // Background sync for real ID
     } catch (err: any) {
       alert(err.message);
+      setBots(previous); // Rollback
+    }
+  };
+
+  const handleDeleteBot = async (id: string) => {
+    if (!confirm('Xóa Bot này?')) return;
+    const previous = [...bots];
+    setBots(bots.filter(b => b.id !== id));
+    try {
+      await api.deleteBotResource(id);
+    } catch (err: any) {
+      alert(err.message);
+      setBots(previous);
     }
   };
 
   const handleCreatePassview = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newPv = { id: 'temp-' + Date.now(), title: pvTitle, broker: pvBroker, server: pvServer, accountNumber: pvAccount, password: pvPassword, description: pvDesc, isPremium: pvPremium };
+    const previous = [...passviews];
+    setPassviews([newPv, ...passviews]);
+    
+    setPvTitle(''); setPvBroker(''); setPvServer(''); setPvAccount(''); setPvPassword(''); setPvDesc(''); setPvPremium(false);
+    
     try {
-      await api.createPassviewAccount({
-        title: pvTitle,
-        broker: pvBroker,
-        server: pvServer,
-        accountNumber: pvAccount,
-        password: pvPassword,
-        description: pvDesc,
-        isPremium: pvPremium
-      });
-      alert('Đã thêm Passview thành công!');
-      setPvTitle(''); setPvBroker(''); setPvServer(''); setPvAccount(''); setPvPassword(''); setPvDesc(''); setPvPremium(false);
+      await api.createPassviewAccount(newPv);
       loadTabData();
     } catch (err: any) {
       alert(err.message);
+      setPassviews(previous);
+    }
+  };
+
+  const handleDeletePassview = async (id: string) => {
+    if (!confirm('Xóa Passview này?')) return;
+    const previous = [...passviews];
+    setPassviews(passviews.filter(p => p.id !== id));
+    try {
+      await api.deletePassviewAccount(id);
+    } catch (err: any) {
+      alert(err.message);
+      setPassviews(previous);
     }
   };
 
@@ -963,9 +981,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
                       <td><a href={b.downloadUrl} target="_blank" rel="noreferrer" style={{ color: '#60A5FA' }}>Link tải</a></td>
                       <td>{b.isPremium ? <span style={{ color: '#F59E0B' }}>Có</span> : 'Không'}</td>
                       <td>
-                        <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => {
-                          if (confirm('Xóa Bot này?')) api.deleteBotResource(b.id).then(() => loadTabData());
-                        }}>Xóa</button>
+                        <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => handleDeleteBot(b.id)}>Xóa</button>
                       </td>
                     </tr>
                   ))}
@@ -1040,9 +1056,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
                       </td>
                       <td>{pv.isPremium ? <span style={{ color: '#F59E0B' }}>Có</span> : 'Không'}</td>
                       <td>
-                        <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => {
-                          if (confirm('Xóa Passview này?')) api.deletePassviewAccount(pv.id).then(() => loadTabData());
-                        }}>Xóa</button>
+                        <button className="btn-desk btn-desk-secondary btn-desk-sm" onClick={() => handleDeletePassview(pv.id)}>Xóa</button>
                       </td>
                     </tr>
                   ))}
