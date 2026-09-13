@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -38,6 +38,13 @@ function createWindow() {
 
   win.webContents.on('render-process-gone', (_event, details) => {
     console.error(`Renderer process exited: ${details.reason}`);
+  });
+
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http:') || url.startsWith('https:')) {
+      shell.openExternal(url);
+    }
+    return { action: 'deny' };
   });
 }
 
