@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { api } from '../services/api';
 import { Shield, Users, Key, DownloadCloud, FileText, Plus, RefreshCw, Lock, Unlock, AlertCircle, Copy } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
-const dummyChartData = [
-  { name: 'T2', users: 12 },
-  { name: 'T3', users: 19 },
-  { name: 'T4', users: 31 },
-  { name: 'T5', users: 45 },
-  { name: 'T6', users: 67 },
-  { name: 'T7', users: 89 },
-  { name: 'CN', users: 120 }
-];
 
 interface AdminViewProps {
   subView?: string;
@@ -331,7 +320,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
               <h4 style={{ fontWeight: 700, marginBottom: '14px', fontSize: '1rem' }}>Tăng trưởng người dùng</h4>
               <div style={{ height: 200, width: '100%' }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={dummyChartData}>
+                  <LineChart data={overview.userGrowth || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#2D2C3D" vertical={false} />
                     <XAxis dataKey="name" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />

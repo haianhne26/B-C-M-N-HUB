@@ -25,6 +25,36 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
       prisma.appVersion.findFirst({ where: { isPublished: true }, orderBy: { createdAt: 'desc' } })
     ]);
 
+    // Calculate user growth for the last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const recentUsers = await prisma.user.findMany({
+      where: {
+        createdAt: { gte: sevenDaysAgo }
+      },
+      select: { createdAt: true }
+    });
+
+    const growthMap: Record<string, number> = {};
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sevenDaysAgo);
+      d.setDate(d.getDate() + i);
+      const key = `${d.getDate()}/${d.getMonth() + 1}`;
+      growthMap[key] = 0;
+    }
+
+    recentUsers.forEach(u => {
+      const d = new Date(u.createdAt);
+      const key = `${d.getDate()}/${d.getMonth() + 1}`;
+      if (growthMap[key] !== undefined) {
+        growthMap[key]++;
+      }
+    });
+
+    const userGrowth = Object.entries(growthMap).map(([name, users]) => ({ name, users }));
+
     return res.json({
       success: true,
       data: {
@@ -39,11 +69,12 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
           currentAppVersion: latestVersion?.version || '1.0.0',
         },
         systemStatus: {
-          database: 'ONLINE (SQLite)',
+          database: 'ONLINE (PostgreSQL)',
           geminiApi: config.geminiApiKey ? 'CONFIGURED' : 'UNCONFIGURED (Using Smart Fallback)',
           mt5Bridge: 'ACTIVE',
           uptime: process.uptime(),
-        }
+        },
+        userGrowth
       }
     });
   } catch (err: any) {
