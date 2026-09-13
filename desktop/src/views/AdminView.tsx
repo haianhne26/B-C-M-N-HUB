@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import { api } from '../services/api';
 import { Shield, Users, Key, DownloadCloud, FileText, Plus, RefreshCw, Lock, Unlock, AlertCircle, Copy } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+const dummyChartData = [
+  { name: 'T2', users: 12 },
+  { name: 'T3', users: 19 },
+  { name: 'T4', users: 31 },
+  { name: 'T5', users: 45 },
+  { name: 'T6', users: 67 },
+  { name: 'T7', users: 89 },
+  { name: 'CN', users: 120 }
+];
 
 interface AdminViewProps {
   subView?: string;
@@ -269,7 +281,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Trung Tâm Quản Trị Hệ Thống (OWNER)</h2>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Trung Tâm Quản Trị Hệ Thống</h2>
           <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
             Toàn quyền giám sát người dùng, sinh mã bản quyền, quản lý cập nhật và kiểm tra bảo mật
           </div>
@@ -314,20 +326,40 @@ export const AdminView: React.FC<AdminViewProps> = ({ subView = 'overview' }) =>
             </div>
           </div>
 
-          <div className="app-card">
-            <h4 style={{ fontWeight: 700, marginBottom: '14px' }}>Trạng thái hạ tầng hệ thống</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
-              <div style={{ background: '#100F1E', padding: '12px', borderRadius: '8px' }}>
-                <div style={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>Cơ sở dữ liệu (Database)</div>
-                <div style={{ fontWeight: 700, color: '#10B981' }}>{overview.systemStatus.database}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+            <div className="app-card">
+              <h4 style={{ fontWeight: 700, marginBottom: '14px', fontSize: '1rem' }}>Tăng trưởng người dùng</h4>
+              <div style={{ height: 200, width: '100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={dummyChartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2D2C3D" vertical={false} />
+                    <XAxis dataKey="name" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1E1B2E', border: '1px solid #333246', borderRadius: 8, color: '#fff' }} 
+                      itemStyle={{ color: '#60A5FA' }}
+                    />
+                    <Line type="monotone" dataKey="users" stroke="#60A5FA" strokeWidth={3} dot={{ r: 4, fill: '#1E1B2E', strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-              <div style={{ background: '#100F1E', padding: '12px', borderRadius: '8px' }}>
-                <div style={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>Google Gemini AI API</div>
-                <div style={{ fontWeight: 700, color: '#C4B5FD' }}>{overview.systemStatus.geminiApi}</div>
-              </div>
-              <div style={{ background: '#100F1E', padding: '12px', borderRadius: '8px' }}>
-                <div style={{ fontSize: '0.6875rem', color: '#9CA3AF' }}>Cầu nối MT5 Bridge</div>
-                <div style={{ fontWeight: 700, color: '#60A5FA' }}>{overview.systemStatus.mt5Bridge}</div>
+            </div>
+
+            <div className="app-card">
+              <h4 style={{ fontWeight: 700, marginBottom: '14px', fontSize: '1rem' }}>Trạng thái hạ tầng hệ thống</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+                <div style={{ background: '#100F1E', padding: '10px 12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>Cơ sở dữ liệu (Database)</div>
+                  <div style={{ fontWeight: 700, color: '#10B981', fontSize: '0.875rem' }}>{overview.systemStatus.database}</div>
+                </div>
+                <div style={{ background: '#100F1E', padding: '10px 12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>Google Gemini AI API</div>
+                  <div style={{ fontWeight: 700, color: '#C4B5FD', fontSize: '0.875rem' }}>{overview.systemStatus.geminiApi}</div>
+                </div>
+                <div style={{ background: '#100F1E', padding: '10px 12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>Cầu nối MT5 Bridge</div>
+                  <div style={{ fontWeight: 700, color: '#60A5FA', fontSize: '0.875rem' }}>{overview.systemStatus.mt5Bridge}</div>
+                </div>
               </div>
             </div>
           </div>
