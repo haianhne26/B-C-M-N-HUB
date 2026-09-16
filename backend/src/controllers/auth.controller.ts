@@ -156,13 +156,13 @@ export async function login(req: Request, res: Response) {
         const existingDevice = activeLicense.devices.find(d => d.deviceIdentifier === deviceIdentifier);
 
         if (!existingDevice) {
-          if (activeLicense.devices.length >= activeLicense.maxDevices) {
-            return res.status(403).json({
-              success: false,
-              deviceLimitReached: true,
-              message: `KEY của bạn đã đạt giới hạn thiết bị tối đa (${activeLicense.maxDevices} thiết bị). Vui lòng liên hệ Admin để reset.`
-            });
-          }
+          // if (activeLicense.devices.length >= activeLicense.maxDevices) {
+          //   return res.status(403).json({
+          //     success: false,
+          //     deviceLimitReached: true,
+          //     message: `KEY của bạn đã đạt giới hạn thiết bị tối đa (${activeLicense.maxDevices} thiết bị). Vui lòng liên hệ Admin để reset.`
+          //   });
+          // }
 
           // Register new device
           await prisma.device.create({
